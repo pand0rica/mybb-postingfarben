@@ -213,7 +213,7 @@ function postcolors_setting_definitions(): array
         'postcolors_enabled' => ['Enable Postcolors', 'Turns colour output, name tags, [pc], the User CP page and the overview on or off.', 'yesno', '1'],
         'postcolors_usergroups' => ['Who may set colours', 'User groups (primary or additional group of the logged-in account) that may use the User CP page.', 'groupselect', '-1'],
         'postcolors_username_fid' => ['Player name profile field', 'ID of the custom profile field that holds the name of the person who plays (e.g. 4 for fid4). Used as name tag, display name and for the migration from 1.x.', 'numeric', '0'],
-        'postcolors_bg_variable' => ['Background CSS variable', 'Name of a CSS variable in the theme stylesheets that holds the post background (e.g. --main-bgcolor). Used for the colour preview. Leave empty to always use the fallback.', 'text', ''],
+        'postcolors_bg_variable' => ['Background CSS variable', 'Name of a CSS variable in the theme stylesheets that holds the post background (e.g. --main-bgcolor). Used for the colour preview. Leave empty to always use the fallback.', 'text', '--h4w-main-bgcolor'],
         'postcolors_bg_fallback' => ['Fallback background colour', 'Background colour for the preview when the variable is not found (#RRGGBB).', 'text', '#FFFFFF'],
         'postcolors_bold' => ['Bold coloured text', 'Show coloured text in bold.', 'yesno', '1'],
         'postcolors_element_selectors' => ['Element selectors', 'Additionally output name tags as CSS element selectors (sarah{…}), so raw HTML that bypasses the parser is coloured as well.', 'yesno', '1'],
