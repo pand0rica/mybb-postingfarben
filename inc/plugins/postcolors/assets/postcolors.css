@@ -1,0 +1,106 @@
+/* Postcolors 2.0 – Formular, Übersicht und Editor-Button */
+.postcolors_preview {
+	display: inline-block;
+	min-width: 220px;
+	padding: 6px 10px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 3px;
+}
+
+.postcolors_sample {
+	font-weight: bold;
+}
+
+.postcolors_inputs {
+	white-space: nowrap;
+}
+
+.postcolors_picker {
+	width: 36px;
+	height: 26px;
+	padding: 0;
+	border: 0;
+	background: none;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.postcolors_hex,
+.postcolors_copy {
+	font-family: monospace;
+}
+
+.postcolors_contrast {
+	margin-top: 3px;
+	color: #b45309;
+}
+
+.postcolors_notice {
+	margin-top: 6px;
+	padding: 5px 8px;
+	border-left: 3px solid #b45309;
+	background: rgba(180, 83, 9, 0.08);
+}
+
+.postcolors_swatch {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	border-radius: 2px;
+	vertical-align: middle;
+}
+
+.postcolors_swatch_current {
+	background-color: currentColor;
+}
+
+.postcolors_themeselect {
+	display: inline;
+	margin-left: 8px;
+}
+
+.postcolors_speech .postcolors_quote_custom[hidden] {
+	display: none;
+}
+
+/* SCEditor-Button und Dropdown */
+.sceditor-button-postcolor div {
+	background-image: none !important;
+}
+
+.sceditor-button-postcolor div:before {
+	content: "\25CF";
+	display: block;
+	color: #555 !important;
+	font-size: 15px;
+	line-height: 16px;
+	text-align: center;
+}
+
+.postcolors_dropdown {
+	min-width: 190px;
+}
+
+.postcolors_dropdown_head {
+	padding: 4px 6px 2px;
+	font-size: 11px;
+	opacity: 0.7;
+}
+
+.postcolors_dropdown a {
+	display: block;
+	padding: 3px 6px;
+	color: inherit;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.postcolors_dropdown a:hover,
+.postcolors_dropdown a:focus {
+	background: rgba(0, 0, 0, 0.06);
+}
+
+.postcolors_dropdown .postcolors_swatch {
+	margin-right: 6px;
+}

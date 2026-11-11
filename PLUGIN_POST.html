@@ -1,0 +1,122 @@
+[size=x-large][b]Postcolors[/b][/size]
+[i]Version 2.0.0[/i] – Postingfarben für RPG-Foren: eine Farbe pro Person, die spielt, für alle Charaktere, auf jedem Theme lesbar.
+
+[size=large][b]Worum geht's?[/b][/size]
+
+In vielen RPGs hat jede Person, die spielt, eine eigene Schriftfarbe für die wörtliche Rede ihrer Charaktere. Postcolors verwaltet diese Farben zentral: Du legst deine Farbe einmal im UserCP fest – auf Wunsch pro Theme anders, damit sie auf hellen und dunklen Styles lesbar bleibt – und sie gilt automatisch in allen deinen Accounts. Gefärbt wird wie gewohnt mit Namens-Tags wie [code]<sarah>„Text“</sarah>[/code], mit dem MyCode [code][pc][/code] oder ganz ohne Code über die automatische Färbung wörtlicher Rede.
+
+[size=large][b]Highlights[/b][/size]
+
+[list]
+[*] Eine Farbe pro Spieler*in, geteilt über alle Accounts des Account Switchers
+[*] Master-Farbe plus eigene Farbe pro Theme, mit Live-Vorschau auf dem Theme-Hintergrund
+[*] Namens-Tags funktionieren überall – auch in Foren ohne HTML, in PNs, Vorschau, Portal, Archiv
+[*] Wörtliche Rede automatisch färben, ohne Code im Text
+[*] Teamfarben (Häuser, Gruppen) im ACP, Editor-Button und Übersichtsliste
+[/list]
+
+[size=large][b]Was das Plugin alles kann[/b][/size]
+
+[b]Für Mitglieder[/b]
+[list]
+[*][b]Postingfarben festlegen[/b] – Ein Formular mit einem Speichern-Button: Master-Farbe und für jedes Theme, das du nutzen darfst, optional eine eigene Farbe. Color-Picker und Hex-Feld sind verbunden, die Vorschau zeigt den Beispieltext auf dem echten Theme-Hintergrund, bei schlecht lesbaren Kombinationen erscheint eine Kontrastwarnung. „Master verwenden“ setzt eine Theme-Farbe zurück. [i](UserCP → Postingfarben)[/i]
+[*][b]Eine Farbe für alle Accounts[/b] – Die Farben hängen an deinem Hauptaccount. Du kannst sie aus jedem verknüpften Account ändern, die Änderung gilt sofort überall.
+[*][b]Namens-Tags[/b] – Mit [code]<sarah>…</sarah>[/code] färbt jede*r Text in Sarahs Farbe – praktisch, wenn in deinem Beitrag ein Charakter von jemand anderem spricht. Der Tag ist der Name aus dem Profilfeld (Groß/Klein egal). Passt der Name nicht als Tag (Leerzeichen, Sonderzeichen) oder ist er vergeben, legst du einen eigenen Tag fest. [i](UserCP → Postingfarben)[/i]
+[*][b]MyCode [pc][/b] – [code][pc]…[/pc][/code] färbt in deiner eigenen Farbe, [code][pc=slug]…[/pc][/code] in einer Teamfarbe.
+[*][b]Wörtliche Rede automatisch färben[/b] – Schalter an, Anführungszeichen wählen („…“, »…«, «…», "…", “…”, '…', ‚…‘ oder ein eigenes Paar) – fertig. Alles zwischen den Zeichen erscheint in deiner Farbe, in Beiträgen und PNs. Apostrophe wie in „geht's“ werden erkannt, Zitate, Code, Links und bereits gefärbte Stellen bleiben unverändert. Der gespeicherte Text bleibt sauber.
+[*][b]Editor-Button[/b] – Text markieren, Button klicken, „Meine Farbe“ oder eine Teamfarbe wählen. Im WYSIWYG-Editor siehst du die Farben direkt, beim Umschalten in den Quelltext geht nichts verloren.
+[*][b]Vorschau[/b] – Die Vorschau bei neuen Themen, Antworten, Bearbeitungen und PNs zeigt alle Farben schon vor dem Speichern.
+[*][b]Übersichtsliste[/b] – Alle Teamfarben und alle Spieler*innen mit ihrer Farbe im aktuellen Theme, dazu der Tag zum Kopieren; ein anderes Theme lässt sich auswählen. [i](misc.php?action=postcolors)[/i]
+[/list]
+
+[b]Für Administratoren[/b]
+[list]
+[*][b]Teamfarben[/b] – Anlegen, bearbeiten, löschen und sortieren: Titel, Slug für [code][pc=slug][/code], optionaler Namens-Tag (z. B. [code]<gry>[/code]), aktiv ja/nein, Master-Farbe und Farbe pro Theme – mit derselben Vorschau wie im UserCP. [i](ACP → Konfiguration → Postcolors)[/i]
+[*][b]Spieler*innen[/b] – Übersicht aller Personen mit Farben, Tag, Tag-Konflikten und wörtlicher Rede; Daten einzelner Personen lassen sich löschen.
+[*][b]Werkzeuge[/b] – Status (Account Switcher, Profilfeld, Anzahl Tags und Konflikte) und Cache neu aufbauen.
+[*][b]Migration aus 1.x[/b] – Probelauf ohne Schreibzugriffe, Bericht als Tabelle (übernommen, zusammengeführt, übersprungen mit Grund), Auswahl des Hauptaccounts bei gleichen Namen, Master-Farbe automatisch ableiten, Aufräumen der Altreste, Liste der in Beiträgen verwendeten Tags ohne Zuordnung. Mehrfach ausführbar, mit Eintrag im Admin-Log.
+[/list]
+
+[b]Läuft automatisch[/b]
+[list]
+[*][b]Farb-CSS aus dem Cache[/b] – Pro Theme liegt fertiges CSS im Cache; im Seitenaufruf gibt es keine zusätzliche Datenbankabfrage. Wechselt jemand das Theme, greifen sofort die passenden Farben.
+[*][b]Aufräumen[/b] – Wird ein Hauptaccount oder ein Theme gelöscht, verschwinden die zugehörigen Farben. Ändert sich der Name im Profilfeld, gilt sofort der neue Tag.
+[/list]
+
+[b]Zusammenspiel mit anderen Plugins[/b]
+[list]
+[*][b]Enhanced Account Switcher[/b] – Mit dem Account Switcher gehören die Farben dem Hauptaccount und gelten in allen verknüpften Accounts. Ohne ihn zählt jeder Account als eigene Person; das ACP weist darauf hin.
+[/list]
+
+[size=large][b]So sieht's aus[/b][/size]
+
+[i]Screenshot folgt: UserCP – Postingfarben[/i]
+
+[i]Screenshot folgt: Editor-Button mit Farbauswahl[/i]
+
+[i]Screenshot folgt: ACP – Teamfarbe bearbeiten[/i]
+
+[size=large][b]Einstellungen[/b][/size]
+
+[list]
+[*][b]Postcolors aktivieren[/b] – Farben, Namens-Tags, [pc], UserCP-Seite und Übersicht an/aus [i](Standard: ja)[/i]
+[*][b]Wer darf Farben festlegen?[/b] – Gruppen, die die UserCP-Seite nutzen dürfen; gespeicherte Farben werden immer angezeigt [i](Standard: alle)[/i]
+[*][b]Profilfeld „Spieler*innen-Name“[/b] – ID des Profilfelds mit dem Namen der Person, die spielt [i](Standard: 0)[/i]
+[*][b]CSS-Variable für den Hintergrund[/b] – Variable aus den Theme-Stylesheets für die Vorschau [i](Standard: leer)[/i]
+[*][b]Fallback-Hintergrundfarbe[/b] – wenn die Variable fehlt [i](Standard: #FFFFFF)[/i]
+[*][b]Gefärbten Text fett darstellen[/b] [i](Standard: ja)[/i]
+[*][b]Element-Selektoren[/b] – Namens-Tags zusätzlich als CSS-Selektoren, damit auch HTML außerhalb des Parsers gefärbt wird [i](Standard: ja)[/i]
+[*][b]Editor-Button fügt ein[/b] – Namens-Tag oder [pc] [i](Standard: Namens-Tag)[/i]
+[*][b]Automatische Färbung wörtlicher Rede erlauben[/b] [i](Standard: ja)[/i]
+[*][b]Foren mit automatischer Färbung[/b] [i](Standard: alle)[/i]
+[*][b]Automatische Färbung in PNs[/b] [i](Standard: ja)[/i]
+[/list]
+
+[size=large][b]Voraussetzungen[/b][/size]
+
+[list]
+[*] MyBB 1.8.x
+[*] PHP 7.4 oder 8.x
+[*] Optional (empfohlen): Enhanced Account Switcher
+[/list]
+
+[size=large][b]Installation[/b][/size]
+
+[list=1]
+[*] Dateien in das MyBB-Stammverzeichnis kopieren (Ordnerstruktur beibehalten)
+[*] ACP → Konfiguration → Plugins → Postcolors → Installieren & aktivieren
+[*] ACP → Konfiguration → Einstellungen → Postcolors → Profilfeld „Spieler*innen-Name“ eintragen
+[/list]
+
+[size=large][b]Update von 1.x[/b][/size]
+
+[list=1]
+[*] Datenbank sichern
+[*] Postcolors 1.x im ACP [b]deaktivieren – nicht deinstallieren[/b] (die Deinstallation löscht die Tabelle mit allen Farben)
+[*] Neue Dateien hochladen, alte .tpl-Dateien von 1.x löschen
+[*] Postcolors 2.0 installieren & aktivieren – vorhandene Einstellungen werden übernommen
+[*] ACP → Konfiguration → Postcolors → Migration: erst Probelauf, dann ausführen
+[*] Wenn alles passt: Alttabelle über den Button im Migrations-Tab löschen
+[/list]
+Beiträge werden nicht verändert – [code]<sarah>…</sarah>[/code] funktioniert weiter wie bisher.
+
+[size=large][b]Für die Entwicklung[/b][/size]
+
+[list]
+[*] [code]postcolors_apply_speech(string $html, int $author_uid, int $fid = 0, bool $is_pm = false): string[/code] – färbt wörtliche Rede in fertig geparstem HTML
+[*] [code]postcolors_resolve_pid(int $uid): int[/code] – Hauptaccount eines Accounts
+[*] [code]postcolors_rebuild_cache(): void[/code] – Cache neu aufbauen
+[/list]
+
+[size=large][b]Grenzen & Ausblick[/b][/size]
+
+Die automatische Färbung erkennt wörtliche Rede über Regeln, nicht über Sprachverständnis: Bei ungewöhnlicher Zeichensetzung wird im Zweifel lieber eine Passage zu wenig gefärbt als der ganze Erzähltext. In der Schnellantwort ohne Editor gibt es keinen Button – Tags und [pc] funktionieren dort aber wie gewohnt. Ändert jemand den eigenen Namen, färbt der alte Tag in alten Beiträgen nicht mehr; die Migration listet solche Tags auf.
+
+[size=small]Fragen, Bugs oder Feature-Wünsche bitte hier im Thread melden.
+Ich freue mich, wenn ihr mir den Link dalasst, wo das Plugin verwendet wird.[/size]
+
+[align=center][size=20][url=https://github.com/pand0rica/mybb-postingfarben]Download[/url][/size]
+
+<a href='https://ko-fi.com/W7W51WSR23' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>[/align]
+
+Über eine freiwillige kleine Spende freue ich mich immer sehr ❤

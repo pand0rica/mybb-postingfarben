@@ -1,0 +1,9 @@
+tests/ export-ignore
+.github/ export-ignore
+docs/ export-ignore
+AGENTS.md export-ignore
+CLAUDE.md export-ignore
+PROJECT_CONTEXT.md export-ignore
+IMPLEMENTATION_PLAN.md export-ignore
+start_prompt.md export-ignore
+.claudeignore export-ignore
