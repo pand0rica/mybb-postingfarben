@@ -372,16 +372,22 @@ function postcolors_install_template_edits(): void
     // Farb-CSS in den Seitenkopf
     find_replace_templatesets('headerinclude', '#$#', "\n{\$postcolors_css}", 1, false, 1);
 
-    // UserCP-Link: RPG-Navigation, falls vorhanden, sonst „Sonstiges“
-    $rpg = $db->fetch_array($db->simple_select('templates', 'template', "title = 'usercp_nav_rpg'", ['limit' => 1]));
-    if ($rpg && strpos((string)$rpg['template'], '{$usercp_nav_rpg_custom}') !== false) {
-        $line = postcolors_rpg_nav_line((string)$rpg['template']);
-        find_replace_templatesets('usercp_nav_rpg', '#' . preg_quote('{$usercp_nav_rpg_custom}', '#') . '#',
-            $line . "\n" . '{$usercp_nav_rpg_custom}', 1, false, 1);
-        return;
-    }
-    $anchor = '<tr><td class="trow1 smalltext"><a href="usercp.php?action=drafts" class="usercp_nav_item usercp_nav_drafts">{$draftcount}</a></td></tr>';
-    find_replace_templatesets('usercp_nav_misc', '#' . preg_quote($anchor, '#') . '#', $anchor . "\n" . postcolors_nav_misc_row(), 1, false, 1);
+    // H4W: Menüpunkt nur im RPG-Menü der User-Accounts (Group Templates wählt
+    // usercp_nav_rpg_user für die Gruppen 43/32; Charaktere bekommen keinen Eintrag).
+    // Der fest eingetragene 1.x-Link (action=postcolor) wird dabei ersetzt.
+    find_replace_templatesets('usercp_nav_rpg_user', '#\n?[^\n]*usercp\.php\?action=postcolor(?!s)[^\n]*#', '', 0);
+    find_replace_templatesets('usercp_nav_rpg_user', '#' . preg_quote('{$usercp_nav_rpg_custom}', '#') . '#',
+        postcolors_h4w_nav_row() . "\n    " . '{$usercp_nav_rpg_custom}', 0, false, 1);
+}
+
+/** H4W: Menüzeile im Stil der übrigen Plugin-Zeilen der RPG-Kategorie (Inline-SVG in Linkfarbe). */
+function postcolors_h4w_nav_row(): string
+{
+    return '<tr><td class="trow1 smalltext"><a href="usercp.php?action=postcolors" class="usercp_nav_item usercp_nav_postcolors" style="padding-left: 0;">'
+        . '<svg class="usercp_nav_icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true" style="vertical-align: -3px; margin-right: 6px;">'
+        . '<path d="M8 1.8C5.4 5 3.8 7.3 3.8 9.6a4.2 4.2 0 0 0 8.4 0C12.2 7.3 10.6 5 8 1.8z" stroke-width="1.3" stroke-linejoin="round"/>'
+        . '<path d="M6 10.2a2 2 0 0 0 2 1.9" stroke-width="1.3" stroke-linecap="round"/></svg>'
+        . '{$lang->postcolors_nav}</a></td></tr><!--postcolors_nav-->';
 }
 
 /**
@@ -407,7 +413,7 @@ function postcolors_remove_template_edits(): void
     require_once MYBB_ROOT . 'inc/adminfunctions_templates.php';
 
     find_replace_templatesets('headerinclude', '#\n?\{\$postcolors_css\}#', '', 0);
-    foreach (['usercp_nav_rpg', 'usercp_nav_misc'] as $title) {
+    foreach (['usercp_nav_rpg_user', 'usercp_nav_rpg', 'usercp_nav_misc'] as $title) {
         // Nur die eigene Zeile (inkl. vorangehendem Zeilenumbruch) entfernen
         find_replace_templatesets($title, '#\n?[^\n]*<!--postcolors_nav-->#', '', 0);
     }
