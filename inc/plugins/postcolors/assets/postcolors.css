@@ -64,6 +64,51 @@
 	display: none;
 }
 
+/* Schmale Bildschirme: Farbzeilen untereinander statt vier Spalten */
+@media (max-width: 768px) {
+	.postcolors_table .postcolors_head {
+		display: none;
+	}
+
+	.postcolors_table tr.postcolors_row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: stretch;
+	}
+
+	.postcolors_table tr.postcolors_row > td {
+		display: block;
+		flex: 1 1 100%;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	.postcolors_table tr.postcolors_row > td + td {
+		border-top: 0;
+		padding-top: 0;
+	}
+
+	/* Farbfeld und Zurücksetzen nebeneinander */
+	.postcolors_table tr.postcolors_row > td:nth-child(3) {
+		flex: 1 1 auto;
+		width: auto;
+	}
+
+	.postcolors_table tr.postcolors_row > td:nth-child(4) {
+		flex: 0 0 auto;
+		width: auto;
+	}
+
+	.postcolors_preview {
+		display: block;
+		min-width: 0;
+	}
+
+	.postcolors_inputs {
+		white-space: normal;
+	}
+}
+
 /* SCEditor-Button und Dropdown */
 .sceditor-button-postcolor div {
 	background-image: none !important;
