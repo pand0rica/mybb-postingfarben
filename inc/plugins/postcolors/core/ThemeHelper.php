@@ -113,40 +113,105 @@ class PostcolorsThemeHelper
             return $result;
         }
 
-        $sheets = [];
-        $tids = array_map('intval', array_keys($themes));
         $parents = [];
-        foreach ($themes as $tid => $theme) {
-            $parents[(int)$tid] = (int)($theme['pid'] ?? 0);
-        }
-        // Eltern (auch das Master-Theme) mitladen
         $query = $db->simple_select('themes', 'tid, pid');
         while ($row = $db->fetch_array($query)) {
             $parents[(int)$row['tid']] = (int)$row['pid'];
         }
-
-        $query = $db->simple_select('themestylesheets', 'tid, stylesheet', '', ['order_by' => 'sid']);
-        while ($row = $db->fetch_array($query)) {
-            $sheets[(int)$row['tid']] = ($sheets[(int)$row['tid']] ?? '') . "\n" . (string)$row['stylesheet'];
+        foreach ($themes as $tid => $theme) {
+            $parents[(int)$tid] = (int)($theme['pid'] ?? ($parents[(int)$tid] ?? 0));
         }
 
-        $pattern = '/(?:^|[;{\s])' . preg_quote($variable, '/') . '\s*:\s*([^;}]+)/';
-        foreach ($tids as $tid) {
-            $value = null;
+        // Stylesheets je Theme und Name (wie MyBB: gleichnamiges Stylesheet im Child ersetzt das der Eltern)
+        $sheets = [];
+        $query = $db->simple_select('themestylesheets', 'tid, name, stylesheet', '', ['order_by' => 'sid']);
+        while ($row = $db->fetch_array($query)) {
+            $sheets[(int)$row['tid']][(string)$row['name']] = (string)$row['stylesheet'];
+        }
+
+        foreach (array_map('intval', array_keys($themes)) as $tid) {
+            // Kette vom Theme bis zur Wurzel
+            $chain = [];
             $current = $tid;
-            $guard = 0;
-            while ($current > 0 && $guard++ < 20) {
-                if (isset($sheets[$current]) && preg_match($pattern, $sheets[$current], $m)) {
-                    $value = self::safeCssColor(trim(str_replace('!important', '', $m[1])));
-                    if ($value !== null) {
-                        break;
-                    }
-                }
+            while ($current > 0 && !in_array($current, $chain, true) && count($chain) < 20) {
+                $chain[] = $current;
                 $current = $parents[$current] ?? 0;
             }
+            $effective = [];
+            foreach ($chain as $ancestor) {
+                foreach ($sheets[$ancestor] ?? [] as $name => $css) {
+                    if (!isset($effective[$name])) {
+                        $effective[$name] = $css;
+                    }
+                }
+            }
+            $vars = self::collectRootVariables($effective);
+            $value = isset($vars[$variable]) ? self::resolveVariables($vars[$variable], $vars) : null;
+            $value = $value !== null ? self::safeCssColor($value) : null;
             $result[$tid] = $value ?? $fallback;
         }
         return $result;
+    }
+
+    /**
+     * Sammelt Custom Properties aus :root-Regeln. Werte aus :where(:root) (Spezifität 0) werden
+     * von normalen :root-Regeln überschrieben; @media-Blöcke werden ignoriert.
+     *
+     * @param array<string,string> $stylesheets Name => CSS
+     * @return array<string,string> --name => Wert
+     */
+    public static function collectRootVariables(array $stylesheets): array
+    {
+        $weak = [];
+        $strong = [];
+        foreach ($stylesheets as $css) {
+            $css = (string)preg_replace('#/\*.*?\*/#s', '', $css);
+            // @media/@supports-Blöcke (eine Verschachtelungsebene) entfernen
+            $css = (string)preg_replace('#@(media|supports|container)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}#s', '', $css);
+            if (!preg_match_all('#([^{}]+)\{([^{}]*)\}#s', $css, $rules, PREG_SET_ORDER)) {
+                continue;
+            }
+            foreach ($rules as $rule) {
+                $selector = trim($rule[1]);
+                if (stripos($selector, ':root') === false) {
+                    continue;
+                }
+                $isWeak = stripos($selector, ':where(') !== false;
+                if (!preg_match_all('#(--[a-zA-Z0-9_-]+)\s*:\s*([^;]+)#', $rule[2], $decls, PREG_SET_ORDER)) {
+                    continue;
+                }
+                foreach ($decls as $decl) {
+                    $value = trim(str_ireplace('!important', '', $decl[2]));
+                    if ($isWeak) {
+                        $weak[$decl[1]] = $value;
+                    } else {
+                        $strong[$decl[1]] = $value;
+                    }
+                }
+            }
+        }
+        return array_merge($weak, $strong);
+    }
+
+    /**
+     * Löst var(--x) bzw. var(--x, Fallback) rekursiv auf (max. 10 Ebenen).
+     */
+    public static function resolveVariables(string $value, array $vars, int $depth = 0): ?string
+    {
+        $value = trim($value);
+        if ($depth > 10) {
+            return null;
+        }
+        if (!preg_match('#^var\(\s*(--[a-zA-Z0-9_-]+)\s*(?:,\s*(.+))?\)$#s', $value, $m)) {
+            return $value;
+        }
+        if (isset($vars[$m[1]])) {
+            $resolved = self::resolveVariables($vars[$m[1]], $vars, $depth + 1);
+            if ($resolved !== null) {
+                return $resolved;
+            }
+        }
+        return isset($m[2]) && trim($m[2]) !== '' ? self::resolveVariables($m[2], $vars, $depth + 1) : null;
     }
 
     /**
