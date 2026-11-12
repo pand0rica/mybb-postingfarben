@@ -174,6 +174,7 @@ function postcolors_uninstall(): void
     postcolors_remove_stylesheet();
 
     $cache->delete('postcolors');
+    $cache->delete('postcolors_migration');
 }
 
 function postcolors_activate(): void
@@ -386,7 +387,11 @@ function postcolors_remove_stylesheet(): void
 /** Fertige UserCP-Zeile für das Standard-Template usercp_nav_misc. */
 function postcolors_nav_misc_row(): string
 {
-    return '<tr><td class="trow1 smalltext"><a href="usercp.php?action=postcolors" class="usercp_nav_item usercp_nav_postcolors">{$lang->postcolors_nav}</a></td></tr><!--postcolors_nav-->';
+    // Icon inline (die Klasse usercp_nav_postcolors hat im Theme keine CSS-Regel, debugging.md #20)
+    return '<tr><td class="trow1 smalltext"><a href="usercp.php?action=postcolors" class="usercp_nav_item usercp_nav_postcolors" '
+        . 'style="background-image: url(\'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 16 16%22%3E'
+        . '%3Cpath d=%22M8 1.8C5.4 5 3.8 7.3 3.8 9.6a4.2 4.2 0 0 0 8.4 0C12.2 7.3 10.6 5 8 1.8z%22 fill=%22none%22 stroke=%22%23555%22 stroke-width=%221.3%22/%3E%3C/svg%3E\');">'
+        . '{$lang->postcolors_nav}</a></td></tr><!--postcolors_nav-->';
 }
 
 function postcolors_install_template_edits(): void

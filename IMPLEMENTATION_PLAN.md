@@ -43,7 +43,7 @@ Bei Unklarheit gezielt nachfragen, aber nicht umplanen. Kontext: `PROJECT_CONTEX
 - **Abnahme:** Selbsttest + HTTP-Flows (Thread mit HTML aus/an, Vorschau, Quick-Edit).
 
 ## Schritt 7 – Frontend: UserCP, Übersicht, CSS-Ausgabe, Auto-Färbung
-- [x] **Dateien:** `modules/usercp.php`, `modules/misc.php`, Templates, `jscripts/postcolors.js`
+- [x] **Dateien:** `modules/usercp.php`, `modules/list.php` + `postcolors.php`, Templates, `jscripts/postcolors.js`
 - **Abnahme:** Playwright: Picker, Reset, Speichern, Vorschau; Liste pro Theme.
 
 ## Schritt 8 – Editor

@@ -58,6 +58,8 @@ User CP → **Posting colours** (`usercp.php?action=postcolors`).
 
 Everything is saved with one button and applies to all your linked accounts at once.
 
+![User CP: posting colours](docs/screenshots/usercp.png)
+
 ### Colouring text
 | Writing | Result |
 |---|---|
@@ -72,10 +74,14 @@ previews, signatures, the portal, search, print view and archive. Unknown tags a
 Inside `[code]`/`[php]` tags stay text. Quotes keep the colour of the person who wrote the
 quoted post.
 
+![Post with coloured direct speech, team colour and name tag](docs/screenshots/post.png)
+
 ### Editor button
 The editor gets a **posting colour** button. Select text, click the button and choose *My
 colour* or a team colour. Depending on the setting it inserts the name tag or `[pc]`. In the
 WYSIWYG editor coloured passages are shown in colour.
+
+![Editor button](docs/screenshots/editor.png)
 
 ### Overview
 `postcolors.php` lists all team colours and every player with their colour in the current theme
@@ -84,10 +90,15 @@ WYSIWYG editor coloured passages are shown in colour.
 lists, enter the frame template (e.g. `listen`) and the navigation template (e.g. `listen_nav`) in
 the settings; the frame receives `{$listen_content}`, `{$listen_nav}` and `{$headline}`.
 
+![Overview](docs/screenshots/overview.png)
+
 ### Team colours (admins)
 ACP → Configuration → **Postcolors** → *Add team colour*: title, slug (for `[pc=slug]`),
 optional name tag, order, active, master colour and optional colour per theme. The list can be
 sorted; teams can be edited or deleted.
+
+![ACP: team colours](docs/screenshots/acp-teams.png)
+![ACP: edit team colour](docs/screenshots/acp-team.png)
 
 ### Tools (admins)
 *Players* lists everyone with colours, their tag, conflicts and lets you delete their data.

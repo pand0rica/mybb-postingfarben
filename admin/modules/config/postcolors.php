@@ -24,7 +24,7 @@ define('POSTCOLORS_ACP_URL', 'index.php?module=config-postcolors');
 $page->add_breadcrumb_item($lang->postcolors, POSTCOLORS_ACP_URL);
 $page->extra_header .= '<style type="text/css">' . (string)@file_get_contents(POSTCOLORS_DIR . 'assets/postcolors.css')
     . "\n.postcolors_table td{vertical-align:middle}.postcolors_hex.postcolors_invalid{border-color:#c00}</style>\n"
-    . '<script type="text/javascript" src="../jscripts/postcolors.js?ver=' . POSTCOLORS_VERSION . '"></script>' . "\n";
+    . '<script type="text/javascript" src="' . htmlspecialchars_uni($mybb->asset_url) . '/jscripts/postcolors.js?ver=' . POSTCOLORS_VERSION . '"></script>' . "\n";
 
 $action = $mybb->get_input('action');
 

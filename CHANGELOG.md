@@ -1,21 +1,6 @@
 # Changelog
 
-## [Unreleased]
-
-### Changed
-- User CP: quotation marks for automatic colouring are chosen with **checkboxes** – several
-  pairs plus an own pair can be active at the same time (new column `quote_presets`; existing
-  single pairs are migrated on activation).
-- User CP: colour rows are stacked on narrow screens (max-width 768px).
-- Overview moved to its own page `postcolors.php`; `misc.php?action=postcolors` redirects (301).
-  New optional settings embed it into the frame of the forum's other lists (frame + navigation
-  template, e.g. `listen` / `listen_nav`).
-
-### Fixed
-- Preview background: CSS variables that reference other variables (`var(--x)`) and values
-  inherited from parent themes are resolved; previously the fallback was always used.
-
-## [2.0.0] – 2026-11-11
+## [2.0.0] – 2026-11-12
 
 Complete rewrite. Upgrade path from 1.x: see README → *Upgrade from 1.x*.
 
@@ -31,11 +16,15 @@ Complete rewrite. Upgrade path from 1.x: see README → *Upgrade from 1.x*.
   quotes keep the colour of the quoted author.
 - **Editor button** with dropdown (own colour, team colours); coloured display in the WYSIWYG
   editor with lossless switching to source mode.
-- **Automatic colouring of direct speech** with selectable quotation marks, applied when the
-  post is displayed (stored text stays unchanged); apostrophe-aware.
+- **Automatic colouring of direct speech** with several quotation mark pairs at once (checkboxes,
+  plus an own pair), applied when the post is displayed (stored text stays unchanged);
+  apostrophe-aware, nested quotes are coloured once.
 - **User CP page** with one form, colour picker + hex field, live preview on the theme
-  background, contrast warning, own tag.
-- **Overview** `misc.php?action=postcolors` with theme selection.
+  background (CSS variables incl. `var()` chains and parent-theme inheritance are resolved),
+  contrast warning, own tag; colour rows are stacked on narrow screens.
+- **Overview** `postcolors.php` with theme selection and tags to copy; optionally embedded into
+  the frame of the forum's other lists (frame + navigation template). The address
+  `misc.php?action=postcolors` redirects there.
 - **Migration from 1.x** with dry run, conflict selection, report and admin log entry.
 - English and German (du) language files.
 
