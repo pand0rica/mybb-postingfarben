@@ -6,9 +6,26 @@
 </head>
 <body>
 {$header}
+<div class="sidemenu-wrapper">
+
+	<!-- Menü + Handle (eine Einheit) -->
+	<div class="sidemenu">
+		<div class="sidemenu-inner">
+			{$usercpnav}
+		</div>
+
+		<div class="sidemenu-handle">
+			<span class="sidemenu-arrow">›</span>
+		</div>
+	</div>
+
+	<!-- OVERLAY -->
+	<div class="sidemenu-overlay"></div>
+
+	<!-- Content -->
+	<div class="sidemenu-content">
 <table width="100%" border="0" align="center">
 <tr>
-{$usercpnav}
 <td valign="top">
 {$errors}
 <form action="usercp.php" method="post" class="postcolors_form">
@@ -37,6 +54,9 @@
 </td>
 </tr>
 </table>
+	</div>
+
+</div>
 {$footer}
 </body>
 </html>
