@@ -661,8 +661,20 @@ function postcolors_pre_output_page($contents)
 {
     global $mybb, $lang, $theme;
 
-    if (!is_string($contents) || !postcolors_enabled() || stripos($contents, 'jquery.sceditor') === false
-        || stripos($contents, '</head>') === false || strpos($contents, 'postcolors_editor.js') !== false) {
+    if (!is_string($contents) || !postcolors_enabled() || stripos($contents, '</head>') === false) {
+        return $contents;
+    }
+
+    // Fallback: Fehlt {$postcolors_css} in headerinclude (z. B. weil ein Stylekit/Theme-Import das
+    // Template überschrieben hat), das Farb-CSS trotzdem vor </head> einfügen.
+    if (strpos($contents, 'id="postcolors-css"') === false) {
+        $css = postcolors_css_for_theme((int)($theme['tid'] ?? 0));
+        if ($css !== '') {
+            $contents = substr_replace($contents, $css . "\n", (int)stripos($contents, '</head>'), 0);
+        }
+    }
+
+    if (stripos($contents, 'jquery.sceditor') === false || strpos($contents, 'postcolors_editor.js') !== false) {
         return $contents;
     }
 
