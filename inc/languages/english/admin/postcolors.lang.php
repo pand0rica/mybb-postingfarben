@@ -35,6 +35,10 @@ $l['setting_postcolors_speech_forums'] = 'Forums with automatic colouring';
 $l['setting_postcolors_speech_forums_desc'] = 'Forums in which direct speech is coloured automatically.';
 $l['setting_postcolors_speech_pm'] = 'Automatic colouring in private messages';
 $l['setting_postcolors_speech_pm_desc'] = 'Also colour direct speech in private messages.';
+$l['setting_postcolors_list_layout_template'] = 'Overview: frame template (optional)';
+$l['setting_postcolors_list_layout_template_desc'] = 'Name of an existing template the overview postcolors.php is embedded into, e.g. the frame of your other lists. It receives the content as {$listen_content} / {$postcolors_list_content}, the navigation as {$listen_nav} and the title as {$headline}. Empty = own page of the plugin.';
+$l['setting_postcolors_list_nav_template'] = 'Overview: navigation template (optional)';
+$l['setting_postcolors_list_nav_template_desc'] = 'Name of an existing template with the navigation of your lists. Only used together with the frame template.';
 
 // Admin log
 $l['admin_log_config_postcolors_add_team'] = 'Added team colour #{1} ({2})';

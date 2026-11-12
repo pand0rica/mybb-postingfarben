@@ -223,6 +223,8 @@ function postcolors_setting_definitions(): array
         'postcolors_speech_allowed' => ['Allow automatic colouring of direct speech', 'Players may switch on automatic colouring of direct speech in their User CP.', 'yesno', '1'],
         'postcolors_speech_forums' => ['Forums with automatic colouring', 'Forums in which direct speech is coloured automatically.', 'forumselect', '-1'],
         'postcolors_speech_pm' => ['Automatic colouring in private messages', 'Also colour direct speech in private messages.', 'yesno', '1'],
+        'postcolors_list_layout_template' => ['Overview: frame template (optional)', 'Name of an existing template the overview postcolors.php is embedded into, e.g. the frame of your other lists. It receives the content as {$listen_content} / {$postcolors_list_content}, the navigation as {$listen_nav} and the title as {$headline}. Empty = own page of the plugin.', 'text', ''],
+        'postcolors_list_nav_template' => ['Overview: navigation template (optional)', 'Name of an existing template with the navigation of your lists. Only used together with the frame template.', 'text', ''],
     ];
 }
 
@@ -618,8 +620,8 @@ function postcolors_global_start(): void
     if (defined('THIS_SCRIPT') && isset($GLOBALS['templatelist'])) {
         if (THIS_SCRIPT === 'usercp.php') {
             $GLOBALS['templatelist'] .= ',postcolors_usercp,postcolors_usercp_row,postcolors_usercp_tag,postcolors_usercp_speech';
-        } elseif (THIS_SCRIPT === 'misc.php') {
-            $GLOBALS['templatelist'] .= ',postcolors_list,postcolors_list_team,postcolors_list_player,postcolors_list_empty,postcolors_list_themeselect';
+        } elseif (THIS_SCRIPT === 'postcolors.php') {
+            $GLOBALS['templatelist'] .= ',postcolors_list,postcolors_list_content,postcolors_list_team,postcolors_list_player,postcolors_list_empty,postcolors_list_themeselect';
         }
     }
 }
@@ -967,9 +969,10 @@ function postcolors_misc_start(): void
     if ($mybb->get_input('action') !== 'postcolors') {
         return;
     }
-    postcolors_boot();
-    require_once POSTCOLORS_DIR . 'modules/misc.php';
-    postcolors_misc_page();
+    // Alte Adresse aus 2.0.0: dauerhaft auf die eigene Seite umleiten
+    $tid = $mybb->get_input('tid', MyBB::INPUT_INT);
+    header('Location: ' . $mybb->settings['bburl'] . '/postcolors.php' . ($tid > 0 ? '?tid=' . $tid : ''), true, 301);
+    exit;
 }
 
 /* =====================================================================================

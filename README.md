@@ -78,8 +78,11 @@ colour* or a team colour. Depending on the setting it inserts the name tag or `[
 WYSIWYG editor coloured passages are shown in colour.
 
 ### Overview
-`misc.php?action=postcolors` lists all team colours and every player with their colour in the
-current theme (another allowed theme can be chosen), plus the tag to copy.
+`postcolors.php` lists all team colours and every player with their colour in the current theme
+(another allowed theme can be chosen), plus the tag to copy. The old address
+`misc.php?action=postcolors` redirects there. To show the overview inside the frame of your other
+lists, enter the frame template (e.g. `listen`) and the navigation template (e.g. `listen_nav`) in
+the settings; the frame receives `{$listen_content}`, `{$listen_nav}` and `{$headline}`.
 
 ### Team colours (admins)
 ACP → Configuration → **Postcolors** → *Add team colour*: title, slug (for `[pc=slug]`),
@@ -101,6 +104,8 @@ cache.
 - **Bold coloured text**
 - **Element selectors** – also output `sarah{…}` so raw HTML outside the parser is coloured.
 - **Editor button inserts** – name tag or `[pc]`.
+- **Overview: frame template** / **navigation template** – optional, embed `postcolors.php` into
+  the frame of your other lists.
 - **Allow automatic colouring of direct speech**, **Forums with automatic colouring**,
   **Automatic colouring in private messages**.
 

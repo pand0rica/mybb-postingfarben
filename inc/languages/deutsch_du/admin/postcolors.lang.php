@@ -35,6 +35,10 @@ $l['setting_postcolors_speech_forums'] = 'Foren mit automatischer Färbung';
 $l['setting_postcolors_speech_forums_desc'] = 'Foren, in denen wörtliche Rede automatisch gefärbt wird.';
 $l['setting_postcolors_speech_pm'] = 'Automatische Färbung in PNs';
 $l['setting_postcolors_speech_pm_desc'] = 'Wörtliche Rede auch in privaten Nachrichten färben.';
+$l['setting_postcolors_list_layout_template'] = 'Übersicht: Rahmen-Template (optional)';
+$l['setting_postcolors_list_layout_template_desc'] = 'Name eines vorhandenen Templates, in das die Übersicht postcolors.php eingebettet wird, z. B. der Rahmen eurer übrigen Listen. Es erhält den Inhalt als {$listen_content} bzw. {$postcolors_list_content}, die Navigation als {$listen_nav} und den Titel als {$headline}. Leer = eigene Seite des Plugins.';
+$l['setting_postcolors_list_nav_template'] = 'Übersicht: Navigations-Template (optional)';
+$l['setting_postcolors_list_nav_template_desc'] = 'Name eines vorhandenen Templates mit der Navigation eurer Listen. Nur zusammen mit dem Rahmen-Template wirksam.';
 
 // Admin-Log
 $l['admin_log_config_postcolors_add_team'] = 'Teamfarbe #{1} ({2}) angelegt';

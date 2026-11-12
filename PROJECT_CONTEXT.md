@@ -31,7 +31,7 @@ automatisch (wörtliche Rede). Zusätzlich verwaltet das Team globale Teamfarben
   - `SpeechDetector.php` – reine String-API (testbar per CLI), erkennt wörtliche Rede.
   - `SpeechColorizer.php` – wendet den Detector auf Textknoten von HTML an (überspringt Tags,
     Zitate, Code, Links, bereits gefärbte Passagen).
-- **Module** `inc/plugins/postcolors/modules/usercp.php`, `modules/misc.php`.
+- **Module** `inc/plugins/postcolors/modules/usercp.php`, `modules/list.php` (Übersicht, aufgerufen von `postcolors.php` im MyBB-Root).
 - **Migration** `inc/plugins/postcolors/migration/MigrateFromV1.php`.
 - **ACP** `admin/modules/config/postcolors.php` (Tabs: Teamfarben, Spieler*innen, Werkzeuge,
   Migration – letzterer nur, solange `{prefix}colors` existiert).
@@ -75,6 +75,8 @@ Theme-Löschung/-Änderung, Profilfeld-Änderung, Settings-Änderung).
 | `postcolors_speech_allowed` | yesno | Auto-Färbung wörtlicher Rede global erlaubt |
 | `postcolors_speech_forums` | forumselect | Foren mit Auto-Färbung |
 | `postcolors_speech_pm` | yesno | Auto-Färbung in PNs |
+| `postcolors_list_layout_template` | text | Rahmen-Template für `postcolors.php` (z. B. `listen`), leer = eigene Seite |
+| `postcolors_list_nav_template` | text | Navigations-Template dazu (z. B. `listen_nav`) |
 
 ## Hooks (alle im Core 1.8.41 per `run_hooks` nachgewiesen)
 | Hook | Zweck |
@@ -94,7 +96,7 @@ Theme-Löschung/-Änderung, Profilfeld-Änderung, Settings-Änderung).
 | `datahandler_user_update` | Cache neu bauen, wenn das Namens-Profilfeld sich ändert |
 | `datahandler_user_delete_end` | Daten gelöschter Hauptaccounts entfernen |
 | `usercp_start`, `usercp_menu` | UserCP-Seite `usercp.php?action=postcolors` |
-| `misc_start` | Übersicht `misc.php?action=postcolors` |
+| `misc_start` | Alte Adresse `misc.php?action=postcolors` → 301 auf `postcolors.php` |
 | `admin_config_menu`, `admin_config_action_handler`, `admin_config_permissions` | ACP-Modul |
 | `admin_style_themes_delete_commit`, `admin_style_themes_edit_stylesheet_*_commit`, `admin_style_themes_add_commit`, `admin_style_themes_import_commit`, `admin_style_themes_duplicate_commit` | Farbzeilen entfernen / Cache neu |
 | `admin_config_settings_change_commit` | Cache neu (CSS hängt an Settings) |

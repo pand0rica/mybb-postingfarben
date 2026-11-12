@@ -7,6 +7,9 @@
   pairs plus an own pair can be active at the same time (new column `quote_presets`; existing
   single pairs are migrated on activation).
 - User CP: colour rows are stacked on narrow screens (max-width 768px).
+- Overview moved to its own page `postcolors.php`; `misc.php?action=postcolors` redirects (301).
+  New optional settings embed it into the frame of the forum's other lists (frame + navigation
+  template, e.g. `listen` / `listen_nav`).
 
 ### Fixed
 - Preview background: CSS variables that reference other variables (`var(--x)`) and values
