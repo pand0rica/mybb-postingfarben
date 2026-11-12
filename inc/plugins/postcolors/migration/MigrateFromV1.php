@@ -48,7 +48,11 @@ class PostcolorsMigrateFromV1
     public static function legacyExists(): bool
     {
         global $db;
-        return $db->table_exists(self::LEGACY_TABLE);
+        // "colors" ist ein generischer Name: nur als 1.x-Tabelle werten, wenn die Spalten passen
+        return $db->table_exists(self::LEGACY_TABLE)
+            && $db->field_exists('player', self::LEGACY_TABLE)
+            && $db->field_exists('color', self::LEGACY_TABLE)
+            && $db->field_exists('style', self::LEGACY_TABLE);
     }
 
     public static function state(): array

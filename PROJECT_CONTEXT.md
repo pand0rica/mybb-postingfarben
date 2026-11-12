@@ -20,7 +20,7 @@ automatisch (wörtliche Rede). Zusätzlich verwaltet das Team globale Teamfarben
 - **Hauptdatei** `inc/plugins/postcolors.php`: info, Lifecycle, Hook-Registrierung, dünne
   Hook-Handler, die an die Core-Klassen delegieren.
 - **Core** `inc/plugins/postcolors/core/`:
-  - `Repository.php` – alle DB-Zugriffe (Spieler, Farben, Teams, Themes).
+  - `Repository.php` – alle DB-Zugriffe (Spieler*innen, Farben, Teams, Themes).
   - `CacheBuilder.php` – baut den Datacache `postcolors` (CSS pro Theme, Tag-Liste, Teams,
     Sprech-Einstellungen, Theme-Hintergründe).
   - `ThemeHelper.php` – erlaubte Themes, Hintergrundfarbe aus `themestylesheets` (inkl.
