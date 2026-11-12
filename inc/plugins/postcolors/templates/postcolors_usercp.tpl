@@ -21,7 +21,7 @@
 <tr>
 <td class="trow2" colspan="4"><span class="smalltext">{$lang->postcolors_usercp_intro}</span>{$as_note}</td>
 </tr>
-<tr>
+<tr class="postcolors_head">
 <td class="tcat"><span class="smalltext"><strong>{$lang->postcolors_theme}</strong></span></td>
 <td class="tcat"><span class="smalltext"><strong>{$lang->postcolors_preview}</strong></span></td>
 <td class="tcat"><span class="smalltext"><strong>{$lang->postcolors_color}</strong></span></td>
