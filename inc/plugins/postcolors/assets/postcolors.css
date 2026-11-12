@@ -64,6 +64,23 @@
 	display: none;
 }
 
+/* Anführungszeichen: Mehrfachauswahl */
+.postcolors_quote_options {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 16px;
+}
+
+.postcolors_quote_option {
+	white-space: nowrap;
+}
+
+.postcolors_quote_marks {
+	display: inline-block;
+	min-width: 2.5em;
+	font-weight: bold;
+}
+
 /* Schmale Bildschirme: Farbzeilen untereinander statt vier Spalten */
 @media (max-width: 768px) {
 	.postcolors_table .postcolors_head {

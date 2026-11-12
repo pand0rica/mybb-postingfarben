@@ -267,7 +267,7 @@ class PostcolorsMigrateFromV1
                         }
                         PostcolorsRepository::writePlayerColors($pid, $colors);
                         if (!PostcolorsRepository::player($pid)) {
-                            PostcolorsRepository::savePlayer($pid, null, 0, '', '');
+                            PostcolorsRepository::savePlayer($pid, null, 0, '', '', '');
                         }
                     }
                 }

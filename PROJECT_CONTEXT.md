@@ -40,7 +40,7 @@ automatisch (wörtliche Rede). Zusätzlich verwaltet das Team globale Teamfarben
 ## Datenbank-Tabellen (alle `utf8mb4`, InnoDB)
 | Tabelle (`TABLE_PREFIX .`) | Zweck | Wichtige Spalten |
 |---|---|---|
-| `postcolors_players` | Einstellungen pro Spieler*in | `pid` PK (= uid des Hauptaccounts), `custom_tag` VARCHAR(50) NULL UNIQUE (utf8mb4_bin, klein gespeichert), `speech_enabled` TINYINT, `quote_open`/`quote_close` VARCHAR(3), `updated` INT |
+| `postcolors_players` | Einstellungen pro Spieler*in | `pid` PK (= uid des Hauptaccounts), `custom_tag` VARCHAR(50) NULL UNIQUE (utf8mb4_bin, klein gespeichert), `speech_enabled` TINYINT, `quote_presets` VARCHAR(100) (kommagetrennte Voreinstellungen, Mehrfachauswahl), `quote_open`/`quote_close` VARCHAR(3) (eigenes Paar), `updated` INT |
 | `postcolors_colors` | Farben pro Spieler*in | `pid`, `tid` (0 = Master), `color` CHAR(7); PK (`pid`,`tid`) |
 | `postcolors_teams` | Teamfarben | `teamid` PK, `title`, `slug` UNIQUE, `tag` UNIQUE (utf8mb4_bin, klein), `disporder`, `active` |
 | `postcolors_teamcolors` | Farben pro Team | `teamid`, `tid` (0 = Master), `color`; PK (`teamid`,`tid`) |

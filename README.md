@@ -51,9 +51,10 @@ User CP → **Posting colours** (`usercp.php?action=postcolors`).
 - **Name tag** – shows your tag. It is the profile field value of your main account
   (case-insensitive). If your name contains spaces or special characters, or the tag is taken,
   choose an **own tag**.
-- **Colour direct speech automatically** – choose a pair of quotation marks („…“, »…«, «…»,
-  "…", “…”, '…', ‚…‘ or an own pair). Everything between the marks, including the marks, is
-  shown in your colour – without any code in the text.
+- **Colour direct speech automatically** – tick one or more pairs of quotation marks („…“,
+  »…«, «…», "…", “…”, ‚…‘, '…') and/or an own pair. Everything between the marks, including the
+  marks, is shown in your colour – without any code in the text. With several pairs, outer
+  double quotes are coloured first, so nested quotes („… ‚…‘ …“) are coloured once.
 
 Everything is saved with one button and applies to all your linked accounts at once.
 

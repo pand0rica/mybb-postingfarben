@@ -125,13 +125,13 @@
 		});
 		updateAll();
 
-		var preset = form.querySelector('.postcolors_quote_preset');
+		var customToggle = form.querySelector('.postcolors_quote_custom_toggle');
 		var custom = form.querySelector('.postcolors_quote_custom');
-		if (preset && custom) {
+		if (customToggle && custom) {
 			var toggle = function () {
-				custom.hidden = preset.value !== 'custom';
+				custom.hidden = !customToggle.checked;
 			};
-			preset.addEventListener('change', toggle);
+			customToggle.addEventListener('change', toggle);
 			toggle();
 		}
 	}

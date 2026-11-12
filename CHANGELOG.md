@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- User CP: quotation marks for automatic colouring are chosen with **checkboxes** – several
+  pairs plus an own pair can be active at the same time (new column `quote_presets`; existing
+  single pairs are migrated on activation).
+- User CP: colour rows are stacked on narrow screens (max-width 768px).
+
+### Fixed
+- Preview background: CSS variables that reference other variables (`var(--x)`) and values
+  inherited from parent themes are resolved; previously the fallback was always used.
+
 ## [2.0.0] – 2026-11-11
 
 Complete rewrite. Upgrade path from 1.x: see README → *Upgrade from 1.x*.

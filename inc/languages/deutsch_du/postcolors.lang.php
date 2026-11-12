@@ -29,6 +29,7 @@ $l['postcolors_error_tag_format'] = 'Dein eigener Tag muss mit einem Buchstaben 
 $l['postcolors_error_tag_reserved'] = 'Dieser Tag ist ein HTML-Elementname und kann nicht verwendet werden.';
 $l['postcolors_error_tag_taken'] = 'Dieser Tag wird bereits von jemand anderem oder einer Teamfarbe verwendet.';
 $l['postcolors_error_quotes'] = 'Bitte gib ein öffnendes und ein schließendes Anführungszeichen an (je 1–3 Zeichen, ohne Leerzeichen).';
+$l['postcolors_error_quotes_none'] = 'Bitte wähle mindestens ein Paar Anführungszeichen aus oder schalte die automatische Färbung aus.';
 
 // Namens-Tag
 $l['postcolors_tag_title'] = 'Namens-Tag';
@@ -48,6 +49,7 @@ $l['postcolors_speech_title'] = 'Wörtliche Rede automatisch färben';
 $l['postcolors_speech_enable'] = 'Wörtliche Rede in meinen Beiträgen und PNs automatisch färben';
 $l['postcolors_speech_desc'] = 'Alles zwischen den gewählten Anführungszeichen (inklusive der Zeichen) erscheint in deiner Farbe – ohne Code im Text. Zitate, Code, Links und bereits gefärbter Text bleiben unverändert.';
 $l['postcolors_speech_pair'] = 'Anführungszeichen';
+$l['postcolors_speech_pair_desc'] = 'Mehrere möglich – alle gewählten Paare werden gefärbt.';
 $l['postcolors_speech_custom'] = 'Eigenes Paar';
 $l['postcolors_speech_custom_desc'] = 'Öffnendes und schließendes Zeichen, je max. 3 Zeichen.';
 $l['postcolors_speech_open'] = 'Öffnendes Zeichen';

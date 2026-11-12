@@ -29,6 +29,7 @@ $l['postcolors_error_tag_format'] = 'Your own tag must start with a letter and m
 $l['postcolors_error_tag_reserved'] = 'This tag is an HTML element name and cannot be used.';
 $l['postcolors_error_tag_taken'] = 'This tag is already used by someone else or by a team colour.';
 $l['postcolors_error_quotes'] = 'Please enter an opening and a closing quotation mark (1–3 characters each, no spaces).';
+$l['postcolors_error_quotes_none'] = 'Please select at least one pair of quotation marks or switch automatic colouring off.';
 
 // Name tag
 $l['postcolors_tag_title'] = 'Name tag';
@@ -48,6 +49,7 @@ $l['postcolors_speech_title'] = 'Colour direct speech automatically';
 $l['postcolors_speech_enable'] = 'Colour direct speech in my posts and private messages automatically';
 $l['postcolors_speech_desc'] = 'Everything between the chosen quotation marks (including the marks) is shown in your colour – without any code in the text. Quotes, code, links and text that is already coloured stay untouched.';
 $l['postcolors_speech_pair'] = 'Quotation marks';
+$l['postcolors_speech_pair_desc'] = 'Several possible – all selected pairs are coloured.';
 $l['postcolors_speech_custom'] = 'Own pair';
 $l['postcolors_speech_custom_desc'] = 'Opening and closing mark, max. 3 characters each.';
 $l['postcolors_speech_open'] = 'Opening mark';

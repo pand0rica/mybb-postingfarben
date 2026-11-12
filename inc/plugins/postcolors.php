@@ -100,6 +100,7 @@ function postcolors_install(): void
             pid INT UNSIGNED NOT NULL,
             custom_tag VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
             speech_enabled TINYINT(1) NOT NULL DEFAULT 0,
+            quote_presets VARCHAR(100) NOT NULL DEFAULT '',
             quote_open VARCHAR(3) NOT NULL DEFAULT '',
             quote_close VARCHAR(3) NOT NULL DEFAULT '',
             updated INT UNSIGNED NOT NULL DEFAULT 0,
@@ -181,6 +182,7 @@ function postcolors_activate(): void
     postcolors_install_settings();
     rebuild_settings();
 
+    postcolors_upgrade_schema();
     postcolors_install_templates();
     postcolors_install_stylesheet();
     postcolors_install_template_edits();
@@ -262,6 +264,29 @@ function postcolors_install_settings(): void
         $data['name'] = $db->escape_string($name);
         $data['value'] = $db->escape_string($def[3]);
         $db->insert_query('settings', $data);
+    }
+}
+
+/**
+ * Idempotente Schema-Migrationen für Bestandsinstallationen.
+ */
+function postcolors_upgrade_schema(): void
+{
+    global $db;
+    require_once POSTCOLORS_DIR . 'core/bootstrap.php';
+
+    // 2.0.x: mehrere Anführungszeichen-Paare pro Person (vorher genau ein Paar in quote_open/close)
+    if ($db->table_exists('postcolors_players') && !$db->field_exists('quote_presets', 'postcolors_players')) {
+        $db->write_query("ALTER TABLE " . TABLE_PREFIX . "postcolors_players
+            ADD COLUMN quote_presets VARCHAR(100) NOT NULL DEFAULT '' AFTER speech_enabled");
+        // Paare, die einer Voreinstellung entsprechen, dorthin übernehmen; eigene Paare bleiben
+        foreach (PostcolorsQuotes::presets() as $key => $pair) {
+            $db->update_query('postcolors_players', [
+                'quote_presets' => $db->escape_string($key),
+                'quote_open' => '',
+                'quote_close' => '',
+            ], "quote_open = '" . $db->escape_string($pair[0]) . "' AND quote_close = '" . $db->escape_string($pair[1]) . "'");
+        }
     }
 }
 
@@ -430,7 +455,7 @@ function postcolors_data(): array
     static $data = null;
     if ($data === null) {
         $data = $cache->read('postcolors');
-        if (!is_array($data) || ($data['version'] ?? 0) !== 2) {
+        if (!is_array($data) || ($data['version'] ?? 0) !== 3) {
             postcolors_boot();
             $data = PostcolorsCacheBuilder::rebuild();
         }
@@ -548,12 +573,20 @@ function postcolors_apply_speech(string $html, int $author_uid, int $fid = 0, bo
     require_once POSTCOLORS_DIR . 'core/SpeechDetector.php';
     require_once POSTCOLORS_DIR . 'core/SpeechColorizer.php';
 
+    // Mehrere Paare nacheinander; bereits gefärbte Stellen (span.pc) überspringt der nächste Durchlauf
     static $colorizers = [];
     if (!isset($colorizers[$pid])) {
-        [$open, $close] = $data['speech'][$pid];
-        $colorizers[$pid] = new PostcolorsSpeechColorizer((string)$open, (string)$close, 'pc pc-p' . $pid . ' pc-speech');
+        $colorizers[$pid] = [];
+        foreach ((array)$data['speech'][$pid] as $pair) {
+            if (is_array($pair) && isset($pair[0], $pair[1])) {
+                $colorizers[$pid][] = new PostcolorsSpeechColorizer((string)$pair[0], (string)$pair[1], 'pc pc-p' . $pid . ' pc-speech');
+            }
+        }
     }
-    return $colorizers[$pid]->apply($html);
+    foreach ($colorizers[$pid] as $colorizer) {
+        $html = $colorizer->apply($html);
+    }
+    return $html;
 }
 
 /** Merkt sich den Autor für den nächsten parse_message-Aufruf (Hooks vor dem Parsen). */

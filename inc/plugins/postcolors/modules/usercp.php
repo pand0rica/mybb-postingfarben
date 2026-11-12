@@ -11,31 +11,6 @@ if (!defined('IN_MYBB')) {
     die('Direct initialization of this file is not allowed.');
 }
 
-/** Voreingestellte Anführungszeichen-Paare. */
-function postcolors_quote_presets(): array
-{
-    return [
-        'de' => ["\u{201E}", "\u{201C}"],
-        'guillemets' => ["\u{00BB}", "\u{00AB}"],
-        'guillemets_fr' => ["\u{00AB}", "\u{00BB}"],
-        'straight' => ['"', '"'],
-        'en' => ["\u{201C}", "\u{201D}"],
-        'single' => ["'", "'"],
-        'de_single' => ["\u{201A}", "\u{2018}"],
-    ];
-}
-
-/** Ermittelt den Preset-Schlüssel zu einem Paar ('custom', falls keins passt). */
-function postcolors_quote_preset_key(string $open, string $close): string
-{
-    foreach (postcolors_quote_presets() as $key => $pair) {
-        if ($pair[0] === $open && $pair[1] === $close) {
-            return $key;
-        }
-    }
-    return ($open === '' && $close === '') ? 'de' : 'custom';
-}
-
 /** Prüft ein eigenes Anführungszeichen (1–3 Zeichen, kein Leerraum/Steuerzeichen). */
 function postcolors_valid_quote_mark(string $mark): bool
 {
@@ -68,7 +43,7 @@ function postcolors_usercp_page(): void
     $speechAllowed = !empty($mybb->settings['postcolors_speech_allowed']);
 
     $player = PostcolorsRepository::player($pid) ?? [
-        'custom_tag' => null, 'speech_enabled' => 0, 'quote_open' => '', 'quote_close' => '',
+        'custom_tag' => null, 'speech_enabled' => 0, 'quote_presets' => '', 'quote_open' => '', 'quote_close' => '',
     ];
     $colors = PostcolorsRepository::playerColors($pid);
 
@@ -76,6 +51,7 @@ function postcolors_usercp_page(): void
         'colors' => $colors,
         'custom_tag' => (string)($player['custom_tag'] ?? ''),
         'speech_enabled' => (int)$player['speech_enabled'],
+        'quote_presets' => PostcolorsQuotes::parseKeys((string)($player['quote_presets'] ?? '')),
         'quote_open' => (string)$player['quote_open'],
         'quote_close' => (string)$player['quote_close'],
     ];
@@ -119,31 +95,38 @@ function postcolors_usercp_page(): void
 
         // Wörtliche Rede
         $speechEnabled = $speechAllowed ? ($mybb->get_input('speech_enabled', MyBB::INPUT_INT) === 1 ? 1 : 0) : (int)$player['speech_enabled'];
+        $presetKeys = PostcolorsQuotes::parseKeys((string)($player['quote_presets'] ?? ''));
         $open = (string)$player['quote_open'];
         $close = (string)$player['quote_close'];
         if ($speechAllowed) {
-            $preset = $mybb->get_input('quote_preset');
-            $presets = postcolors_quote_presets();
-            if (isset($presets[$preset])) {
-                [$open, $close] = $presets[$preset];
-            } elseif ($preset === 'custom') {
+            // Mehrfachauswahl: Voreinstellungen per Checkbox, dazu optional ein eigenes Paar
+            $presetKeys = PostcolorsQuotes::normalizeKeys($mybb->get_input('quote_presets', MyBB::INPUT_ARRAY));
+            $open = '';
+            $close = '';
+            if ($mybb->get_input('quote_custom', MyBB::INPUT_INT) === 1) {
                 $open = trim($mybb->get_input('quote_open'));
                 $close = trim($mybb->get_input('quote_close'));
                 if (!postcolors_valid_quote_mark($open) || !postcolors_valid_quote_mark($close)) {
                     $errors[] = $lang->postcolors_error_quotes;
+                } elseif (($key = PostcolorsQuotes::presetKey($open, $close)) !== '') {
+                    // eigenes Paar entspricht einer Voreinstellung
+                    $presetKeys = PostcolorsQuotes::normalizeKeys(array_merge($presetKeys, [$key]));
+                    $open = $close = '';
                 }
-            } else {
-                [$open, $close] = $presets['de'];
+            }
+            if ($speechEnabled && empty($presetKeys) && $open === '') {
+                $errors[] = $lang->postcolors_error_quotes_none;
             }
         }
         $form['speech_enabled'] = $speechEnabled;
+        $form['quote_presets'] = $presetKeys;
         $form['quote_open'] = $open;
         $form['quote_close'] = $close;
 
         if (empty($errors)) {
             $db->write_query('START TRANSACTION');
             PostcolorsRepository::writePlayerColors($pid, $newColors);
-            PostcolorsRepository::savePlayer($pid, $customTag !== '' ? $customTag : null, $speechEnabled, $open, $close);
+            PostcolorsRepository::savePlayer($pid, $customTag !== '' ? $customTag : null, $speechEnabled, implode(',', $presetKeys), $open, $close);
             $db->write_query('COMMIT');
             PostcolorsCacheBuilder::rebuild();
             redirect('usercp.php?action=postcolors', $lang->postcolors_saved);
@@ -214,17 +197,17 @@ function postcolors_usercp_page(): void
     $speechsection = '';
     if ($speechAllowed) {
         $speech_checked = $form['speech_enabled'] ? ' checked="checked"' : '';
-        $presetKey = postcolors_quote_preset_key($form['quote_open'], $form['quote_close']);
-        $preset_options = '';
-        foreach (postcolors_quote_presets() as $key => $pair) {
-            $label = htmlspecialchars_uni($pair[0] . '…' . $pair[1]) . ' – ' . $lang->{'postcolors_preset_' . $key};
-            $selected = $presetKey === $key ? ' selected="selected"' : '';
-            $preset_options .= '<option value="' . $key . '"' . $selected . '>' . $label . '</option>';
+        $preset_checkboxes = '';
+        foreach (PostcolorsQuotes::presets() as $key => $pair) {
+            $checked = in_array($key, $form['quote_presets'], true) ? ' checked="checked"' : '';
+            $preset_checkboxes .= '<label class="postcolors_quote_option"><input type="checkbox" class="checkbox" name="quote_presets[]" value="'
+                . $key . '"' . $checked . ' /> <span class="postcolors_quote_marks">' . htmlspecialchars_uni($pair[0] . '…' . $pair[1])
+                . '</span> ' . $lang->{'postcolors_preset_' . $key} . '</label>';
         }
-        $preset_options .= '<option value="custom"' . ($presetKey === 'custom' ? ' selected="selected"' : '') . '>'
-            . $lang->postcolors_preset_custom . '</option>';
-        $quote_open = htmlspecialchars_uni($presetKey === 'custom' ? $form['quote_open'] : '');
-        $quote_close = htmlspecialchars_uni($presetKey === 'custom' ? $form['quote_close'] : '');
+        $hasCustom = $form['quote_open'] !== '' || $form['quote_close'] !== '';
+        $custom_checked = $hasCustom ? ' checked="checked"' : '';
+        $quote_open = htmlspecialchars_uni($form['quote_open']);
+        $quote_close = htmlspecialchars_uni($form['quote_close']);
         eval('$speechsection = "' . $templates->get('postcolors_usercp_speech') . '";');
     }
 
