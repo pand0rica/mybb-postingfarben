@@ -60,14 +60,14 @@ class PostcolorsRepository
         return $colors;
     }
 
-    public static function savePlayer(int $pid, ?string $customTag, int $speechEnabled, string $open, string $close): void
+    public static function savePlayer(int $pid, ?string $customTag, int $speechEnabled, string $presets, string $open, string $close): void
     {
         global $db;
         // replace_query() schreibt null als '' – custom_tag ist UNIQUE, daher eigene Query mit NULL.
         $tag = ($customTag === null || $customTag === '') ? 'NULL' : "'" . $db->escape_string($customTag) . "'";
         $db->write_query("REPLACE INTO " . TABLE_PREFIX . self::T_PLAYERS . "
-            (pid, custom_tag, speech_enabled, quote_open, quote_close, updated)
-            VALUES (" . $pid . ", {$tag}, " . ($speechEnabled ? 1 : 0) . ", '"
+            (pid, custom_tag, speech_enabled, quote_presets, quote_open, quote_close, updated)
+            VALUES (" . $pid . ", {$tag}, " . ($speechEnabled ? 1 : 0) . ", '" . $db->escape_string($presets) . "', '"
             . $db->escape_string($open) . "', '" . $db->escape_string($close) . "', " . (int)TIME_NOW . ")");
     }
 
@@ -106,6 +106,7 @@ class PostcolorsRepository
             }
             $players[$pid]['custom_tag'] = $row['custom_tag'] !== null ? (string)$row['custom_tag'] : null;
             $players[$pid]['speech_enabled'] = (int)$row['speech_enabled'];
+            $players[$pid]['quote_presets'] = (string)($row['quote_presets'] ?? '');
             $players[$pid]['quote_open'] = (string)$row['quote_open'];
             $players[$pid]['quote_close'] = (string)$row['quote_close'];
         }
@@ -114,7 +115,7 @@ class PostcolorsRepository
 
     private static function emptyPlayer(int $pid): array
     {
-        return ['pid' => $pid, 'custom_tag' => null, 'speech_enabled' => 0, 'quote_open' => '',
+        return ['pid' => $pid, 'custom_tag' => null, 'speech_enabled' => 0, 'quote_presets' => '', 'quote_open' => '',
             'quote_close' => '', 'colors' => []];
     }
 

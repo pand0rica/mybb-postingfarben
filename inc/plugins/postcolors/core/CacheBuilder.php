@@ -73,8 +73,11 @@ class PostcolorsCacheBuilder
             }
             $known[$pid] = 1;
             $entries['p' . $pid] = ['colors' => $player['colors'], 'tag' => $resolved['player_tags'][$pid] ?? ''];
-            if (!empty($player['speech_enabled']) && $player['quote_open'] !== '' && $player['quote_close'] !== '') {
-                $speech[$pid] = [$player['quote_open'], $player['quote_close']];
+            if (!empty($player['speech_enabled'])) {
+                $pairs = PostcolorsQuotes::pairs($player['quote_presets'], $player['quote_open'], $player['quote_close']);
+                if (!empty($pairs)) {
+                    $speech[$pid] = $pairs; // Liste von [öffnend, schließend]
+                }
             }
         }
         $slugs = [];
@@ -105,7 +108,7 @@ class PostcolorsCacheBuilder
         );
 
         return [
-            'version' => 2,
+            'version' => 3,
             'built' => TIME_NOW,
             'css' => $css,
             'tags' => $resolved['tags'],

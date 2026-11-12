@@ -304,8 +304,12 @@ if ($action === 'players') {
         $table->construct_cell($tagCell);
         $table->construct_cell(postcolors_acp_swatch((string)($player['colors'][0] ?? '')));
         $table->construct_cell((string)count(array_filter(array_keys($player['colors']))), ['class' => 'align_center']);
-        $table->construct_cell(!empty($player['speech_enabled'])
-            ? htmlspecialchars_uni($player['quote_open'] . '…' . $player['quote_close']) : '–', ['class' => 'align_center']);
+        $pairLabels = [];
+        foreach (PostcolorsQuotes::pairs($player['quote_presets'], $player['quote_open'], $player['quote_close']) as $pair) {
+            $pairLabels[] = htmlspecialchars_uni($pair[0] . '…' . $pair[1]);
+        }
+        $table->construct_cell(!empty($player['speech_enabled']) && !empty($pairLabels)
+            ? implode(' ', $pairLabels) : '–', ['class' => 'align_center']);
         $table->construct_cell('<a href="' . POSTCOLORS_ACP_URL . '&amp;action=delete_player&amp;pid=' . (int)$pid
             . '&amp;my_post_key=' . $mybb->post_code . '" onclick="return AdminCP.deleteConfirmation(this, \''
             . addslashes($lang->postcolors_confirm_delete_player) . '\')">' . $lang->postcolors_delete . '</a>', ['class' => 'align_center']);

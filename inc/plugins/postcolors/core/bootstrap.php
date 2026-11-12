@@ -12,3 +12,4 @@ require_once __DIR__ . '/TagRegistry.php';
 require_once __DIR__ . '/Repository.php';
 require_once __DIR__ . '/CacheBuilder.php';
 require_once __DIR__ . '/MyCodeRenderer.php';
+require_once __DIR__ . '/Quotes.php';
