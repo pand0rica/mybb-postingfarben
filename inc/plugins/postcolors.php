@@ -223,8 +223,8 @@ function postcolors_setting_definitions(): array
         'postcolors_speech_allowed' => ['Allow automatic colouring of direct speech', 'Players may switch on automatic colouring of direct speech in their User CP.', 'yesno', '1'],
         'postcolors_speech_forums' => ['Forums with automatic colouring', 'Forums in which direct speech is coloured automatically.', 'forumselect', '-1'],
         'postcolors_speech_pm' => ['Automatic colouring in private messages', 'Also colour direct speech in private messages.', 'yesno', '1'],
-        'postcolors_list_layout_template' => ['Overview: frame template (optional)', 'Name of an existing template the overview postcolors.php is embedded into, e.g. the frame of your other lists. It receives the content as {$listen_content} / {$postcolors_list_content}, the navigation as {$listen_nav} and the title as {$headline}. Empty = own page of the plugin.', 'text', ''],
-        'postcolors_list_nav_template' => ['Overview: navigation template (optional)', 'Name of an existing template with the navigation of your lists. Only used together with the frame template.', 'text', ''],
+        'postcolors_list_layout_template' => ['Overview: frame template (optional)', 'Name of an existing template the overview postcolors.php is embedded into, e.g. the frame of your other lists. It receives the content as {$listen_content} / {$postcolors_list_content}, the navigation as {$listen_nav} and the title as {$headline}. Empty = own page of the plugin.', 'text', 'listen'],
+        'postcolors_list_nav_template' => ['Overview: navigation template (optional)', 'Name of an existing template with the navigation of your lists. Only used together with the frame template.', 'text', 'listen_nav'],
     ];
 }
 
@@ -405,6 +405,10 @@ function postcolors_install_template_edits(): void
     find_replace_templatesets('usercp_nav_rpg_user', '#\n?[^\n]*usercp\.php\?action=postcolor(?!s)[^\n]*#', '', 0);
     find_replace_templatesets('usercp_nav_rpg_user', '#' . preg_quote('{$usercp_nav_rpg_custom}', '#') . '#',
         postcolors_h4w_nav_row() . "\n    " . '{$usercp_nav_rpg_custom}', 0, false, 1);
+
+    // H4W: Eintrag „Postingfarben“ in der Listen-Navigation (Template listen_nav) auf die eigene
+    // Seite umstellen; vorher zeigte er auf die alte 1.x-Liste listen.php?action=postcolors.
+    find_replace_templatesets('listen_nav', '#href="listen\.php\?action=postcolors"#', 'href="postcolors.php"', 0);
 }
 
 /** H4W: Menüzeile im Stil der übrigen Plugin-Zeilen der RPG-Kategorie (Inline-SVG in Linkfarbe). */
@@ -440,6 +444,8 @@ function postcolors_remove_template_edits(): void
     require_once MYBB_ROOT . 'inc/adminfunctions_templates.php';
 
     find_replace_templatesets('headerinclude', '#\n?\{\$postcolors_css\}#', '', 0);
+    // H4W: Listen-Navigation wieder auf die alte Adresse (Spiegel zu postcolors_install_template_edits)
+    find_replace_templatesets('listen_nav', '#href="postcolors\.php"#', 'href="listen.php?action=postcolors"', 0);
     foreach (['usercp_nav_rpg_user', 'usercp_nav_rpg', 'usercp_nav_misc'] as $title) {
         // Nur die eigene Zeile (inkl. vorangehendem Zeilenumbruch) entfernen
         find_replace_templatesets($title, '#\n?[^\n]*<!--postcolors_nav-->#', '', 0);
