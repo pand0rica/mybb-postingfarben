@@ -51,11 +51,11 @@ $l['admin_log_config_postcolors_migration'] = 'Postcolors migration from 1.x: {1
 
 // Tabs
 $l['postcolors_tab_teams'] = 'Team colours';
-$l['postcolors_tab_teams_desc'] = 'Global team colours (e.g. houses, groups). Each team can be used with its name tag or with [pc=slug].';
+$l['postcolors_tab_teams_desc'] = 'Global team colours (e.g. houses, groups). Each team can be used with any of its name tags or with [pc=slug] – several slugs and tags per team are possible.';
 $l['postcolors_tab_add_team'] = 'Add team colour';
 $l['postcolors_tab_add_team_desc'] = 'Create a new team colour with master colour and optional colours per theme.';
 $l['postcolors_tab_edit_team'] = 'Edit team colour';
-$l['postcolors_tab_edit_team_desc'] = 'Change title, slug, name tag and colours of the team colour.';
+$l['postcolors_tab_edit_team_desc'] = 'Change title, slugs, name tags and colours of the team colour.';
 $l['postcolors_tab_players'] = 'Players';
 $l['postcolors_tab_players_desc'] = 'Everyone who has set a colour. Colours belong to the main account (Account Switcher).';
 $l['postcolors_tab_tools'] = 'Tools';
@@ -97,10 +97,10 @@ $l['postcolors_no_account_switcher'] = 'Enhanced Account Switcher is not install
 // Teams
 $l['postcolors_team_title'] = 'Title';
 $l['postcolors_team_title_desc'] = 'e.g. Gryffindor';
-$l['postcolors_team_slug'] = 'Slug';
-$l['postcolors_team_slug_desc'] = 'Used in the MyCode [pc=slug]. Lower-case letters, digits, _ and -, max. 30 characters, unique.';
-$l['postcolors_team_tag'] = 'Name tag';
-$l['postcolors_team_tag_desc'] = 'Optional. Lets everyone colour text with &lt;tag&gt;…&lt;/tag&gt;. Must be unique across teams and players.';
+$l['postcolors_team_slug'] = 'Slugs';
+$l['postcolors_team_slug_desc'] = 'Used in the MyCode [pc=slug]. Separate several with commas, e.g. <code>staff, hogwarts</code>; the first one is the main slug (editor, overview). Lower-case letters, digits, _ and -, max. 30 characters each, every slug only once.';
+$l['postcolors_team_tag'] = 'Name tags';
+$l['postcolors_team_tag_desc'] = 'Optional. Lets everyone colour text with &lt;tag&gt;…&lt;/tag&gt;. Separate several with commas, e.g. <code>stf, hog</code>; the first one is the main tag (editor button). Every tag must be unique across teams and players.';
 $l['postcolors_team_disporder'] = 'Order';
 $l['postcolors_team_active'] = 'Active';
 $l['postcolors_team_colors'] = 'Colours';
@@ -111,11 +111,12 @@ $l['postcolors_order_saved'] = 'The order has been saved.';
 $l['postcolors_confirm_delete_team'] = 'Do you really want to delete the team colour “{1}”?';
 $l['postcolors_error_team_missing'] = 'This team colour does not exist.';
 $l['postcolors_error_title'] = 'Please enter a title (max. 100 characters).';
-$l['postcolors_error_slug'] = 'The slug may only contain lower-case letters, digits, _ and - (max. 30 characters) and must not look like p123.';
-$l['postcolors_error_slug_taken'] = 'This slug is already used by another team colour.';
+$l['postcolors_error_slug'] = 'At least one slug is invalid or missing: only lower-case letters, digits, _ and - are allowed (max. 30 characters each), and it must not look like p123.';
+$l['postcolors_error_slug_taken'] = 'The slug "{1}" is already used by another team colour.';
+$l['postcolors_error_too_many'] = 'A team colour can have at most {1} slugs and {1} name tags.';
 $l['postcolors_error_tag_format'] = 'The tag must start with a letter and may only contain letters, digits, umlauts, ß, _ and - (max. 50 characters).';
 $l['postcolors_error_tag_reserved'] = 'This tag is an HTML element name and cannot be used.';
-$l['postcolors_error_tag_taken'] = 'This tag is already used by a player or another team colour.';
+$l['postcolors_error_tag_taken'] = 'The tag "{1}" is already used by a player or another team colour.';
 $l['postcolors_error_color_acp'] = 'At least one colour is not valid. Please use the format #RRGGBB.';
 
 // Players

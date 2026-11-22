@@ -44,14 +44,25 @@ function postcolors_list_page(): void
         }
         $row_color = strtoupper($color);
         $row_name = htmlspecialchars_uni((string)$team['title']);
-        $tag = '';
+        $teamTags = [];
+        $teamSlugs = [(string)$team['slug']];
         foreach ($data['teams'] ?? [] as $cached) {
             if ((int)$cached['id'] === (int)$team['teamid']) {
-                $tag = (string)$cached['tag'];
+                $teamTags = (array)($cached['tags'] ?? []);
+                $teamSlugs = (array)($cached['slugs'] ?? $teamSlugs);
             }
         }
-        $row_tag = $tag !== '' ? htmlspecialchars_uni('<' . $tag . '>…</' . $tag . '>') : '';
-        $row_mycode = htmlspecialchars_uni('[pc=' . $team['slug'] . ']…[/pc]');
+        // Every tag / slug of the team, each as its own copy-able chip
+        $tagChips = [];
+        foreach ($teamTags as $tag) {
+            $tagChips[] = htmlspecialchars_uni('<' . $tag . '>…</' . $tag . '>');
+        }
+        $row_tag = implode('</code> <code class="postcolors_usage" title="' . $lang->postcolors_list_usage . '">', $tagChips);
+        $slugChips = [];
+        foreach ($teamSlugs as $slug) {
+            $slugChips[] = htmlspecialchars_uni('[pc=' . $slug . ']…[/pc]');
+        }
+        $row_mycode = implode('</code> <code class="postcolors_usage" title="MyCode">', $slugChips);
         eval('$teamrows .= "' . $templates->get('postcolors_list_team') . '";');
         $trow = alt_trow();
     }

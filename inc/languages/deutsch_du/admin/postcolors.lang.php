@@ -51,11 +51,11 @@ $l['admin_log_config_postcolors_migration'] = 'Postcolors-Migration aus 1.x: {1}
 
 // Tabs
 $l['postcolors_tab_teams'] = 'Teamfarben';
-$l['postcolors_tab_teams_desc'] = 'Globale Teamfarben (z. B. Häuser, Gruppen). Jedes Team kann über seinen Namens-Tag oder mit [pc=slug] verwendet werden.';
+$l['postcolors_tab_teams_desc'] = 'Globale Teamfarben (z. B. Häuser, Gruppen). Jedes Team kann über einen seiner Namens-Tags oder mit [pc=slug] verwendet werden – pro Team sind mehrere Slugs und Tags möglich.';
 $l['postcolors_tab_add_team'] = 'Teamfarbe anlegen';
 $l['postcolors_tab_add_team_desc'] = 'Neue Teamfarbe mit Master-Farbe und optionalen Farben pro Theme anlegen.';
 $l['postcolors_tab_edit_team'] = 'Teamfarbe bearbeiten';
-$l['postcolors_tab_edit_team_desc'] = 'Titel, Slug, Namens-Tag und Farben der Teamfarbe ändern.';
+$l['postcolors_tab_edit_team_desc'] = 'Titel, Slugs, Namens-Tags und Farben der Teamfarbe ändern.';
 $l['postcolors_tab_players'] = 'Spieler*innen';
 $l['postcolors_tab_players_desc'] = 'Alle, die eine Farbe festgelegt haben. Farben gehören zum Hauptaccount (Account Switcher).';
 $l['postcolors_tab_tools'] = 'Werkzeuge';
@@ -97,10 +97,10 @@ $l['postcolors_no_account_switcher'] = 'Der Enhanced Account Switcher ist nicht 
 // Teams
 $l['postcolors_team_title'] = 'Titel';
 $l['postcolors_team_title_desc'] = 'z. B. Gryffindor';
-$l['postcolors_team_slug'] = 'Slug';
-$l['postcolors_team_slug_desc'] = 'Wird im MyCode [pc=slug] verwendet. Kleinbuchstaben, Ziffern, _ und -, max. 30 Zeichen, eindeutig.';
-$l['postcolors_team_tag'] = 'Namens-Tag';
-$l['postcolors_team_tag_desc'] = 'Optional. Damit kann jede*r Text mit &lt;tag&gt;…&lt;/tag&gt; färben. Muss über Teams und Spieler*innen hinweg eindeutig sein.';
+$l['postcolors_team_slug'] = 'Slugs';
+$l['postcolors_team_slug_desc'] = 'Werden im MyCode [pc=slug] verwendet. Mehrere durch Komma trennen, z. B. <code>schulpersonal, hogwarts</code>; der erste ist der Haupt-Slug (Editor, Übersicht). Kleinbuchstaben, Ziffern, _ und -, je max. 30 Zeichen, jeder Slug nur einmal.';
+$l['postcolors_team_tag'] = 'Namens-Tags';
+$l['postcolors_team_tag_desc'] = 'Optional. Damit kann jede*r Text mit &lt;tag&gt;…&lt;/tag&gt; färben. Mehrere durch Komma trennen, z. B. <code>leh, hog</code>; der erste ist der Haupt-Tag (Editor-Button). Jeder Tag muss über Teams und Spieler*innen hinweg eindeutig sein.';
 $l['postcolors_team_disporder'] = 'Sortierung';
 $l['postcolors_team_active'] = 'Aktiv';
 $l['postcolors_team_colors'] = 'Farben';
@@ -111,11 +111,12 @@ $l['postcolors_order_saved'] = 'Die Reihenfolge wurde gespeichert.';
 $l['postcolors_confirm_delete_team'] = 'Willst du die Teamfarbe „{1}“ wirklich löschen?';
 $l['postcolors_error_team_missing'] = 'Diese Teamfarbe existiert nicht.';
 $l['postcolors_error_title'] = 'Bitte gib einen Titel ein (max. 100 Zeichen).';
-$l['postcolors_error_slug'] = 'Der Slug darf nur Kleinbuchstaben, Ziffern, _ und - enthalten (max. 30 Zeichen) und nicht wie p123 aussehen.';
-$l['postcolors_error_slug_taken'] = 'Dieser Slug wird bereits von einer anderen Teamfarbe verwendet.';
+$l['postcolors_error_slug'] = 'Mindestens ein Slug ist ungültig oder fehlt: erlaubt sind Kleinbuchstaben, Ziffern, _ und - (je max. 30 Zeichen); er darf nicht wie p123 aussehen.';
+$l['postcolors_error_slug_taken'] = 'Der Slug „{1}“ wird bereits von einer anderen Teamfarbe verwendet.';
+$l['postcolors_error_too_many'] = 'Pro Teamfarbe sind höchstens {1} Slugs und {1} Namens-Tags möglich.';
 $l['postcolors_error_tag_format'] = 'Der Tag muss mit einem Buchstaben beginnen und darf nur Buchstaben, Ziffern, Umlaute, ß, _ und - enthalten (max. 50 Zeichen).';
 $l['postcolors_error_tag_reserved'] = 'Dieser Tag ist ein HTML-Elementname und kann nicht verwendet werden.';
-$l['postcolors_error_tag_taken'] = 'Dieser Tag wird bereits von einer Person oder einer anderen Teamfarbe verwendet.';
+$l['postcolors_error_tag_taken'] = 'Der Tag „{1}“ wird bereits von einer Person oder einer anderen Teamfarbe verwendet.';
 $l['postcolors_error_color_acp'] = 'Mindestens eine Farbe ist ungültig. Bitte verwende das Format #RRGGBB.';
 
 // Spieler*innen

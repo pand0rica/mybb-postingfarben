@@ -11,7 +11,7 @@ if (!defined('IN_MYBB')) {
     die('Direct initialization of this file is not allowed.');
 }
 
-define('POSTCOLORS_VERSION', '2.0.0');
+define('POSTCOLORS_VERSION', '2.1.0');
 define('POSTCOLORS_DIR', MYBB_ROOT . 'inc/plugins/postcolors/');
 
 /* =====================================================================================
@@ -139,6 +139,7 @@ function postcolors_install(): void
             KEY tid (tid)
         ) {$charset}");
     }
+    postcolors_create_alias_table();
 
     postcolors_install_settings();
     rebuild_settings();
@@ -158,7 +159,7 @@ function postcolors_uninstall(): void
 {
     global $db, $cache;
 
-    foreach (['postcolors_players', 'postcolors_colors', 'postcolors_teams', 'postcolors_teamcolors'] as $table) {
+    foreach (['postcolors_players', 'postcolors_colors', 'postcolors_teams', 'postcolors_teamcolors', 'postcolors_teamaliases'] as $table) {
         if ($db->table_exists($table)) {
             $db->drop_table($table);
         }
@@ -271,12 +272,37 @@ function postcolors_install_settings(): void
 }
 
 /**
+ * Additional slugs ([pc=slug]) and name tags of a team colour. The first slug/tag stays in
+ * postcolors_teams; this table holds every further one. `value` is binary-collated and stored
+ * lower-case, unique per kind.
+ */
+function postcolors_create_alias_table(): void
+{
+    global $db;
+
+    if ($db->table_exists('postcolors_teamaliases')) {
+        return;
+    }
+    $db->write_query("CREATE TABLE " . TABLE_PREFIX . "postcolors_teamaliases (
+        teamid INT UNSIGNED NOT NULL,
+        kind VARCHAR(4) NOT NULL,
+        value VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+        disporder INT NOT NULL DEFAULT 0,
+        PRIMARY KEY (kind, value),
+        KEY teamid (teamid)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+}
+
+/**
  * Idempotente Schema-Migrationen für Bestandsinstallationen.
  */
 function postcolors_upgrade_schema(): void
 {
     global $db;
     require_once POSTCOLORS_DIR . 'core/bootstrap.php';
+
+    // 2.1.0: several slugs / name tags per team colour (additional ones live in this table)
+    postcolors_create_alias_table();
 
     // 2.0.x: mehrere Anführungszeichen-Paare pro Person (vorher genau ein Paar in quote_open/close)
     if ($db->table_exists('postcolors_players') && !$db->field_exists('quote_presets', 'postcolors_players')) {

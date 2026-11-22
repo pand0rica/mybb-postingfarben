@@ -48,6 +48,20 @@ function postcolors_acp_tabs(string $active): void
     $page->output_nav_tabs($tabs, $active);
 }
 
+/** Maximum number of slugs and of name tags per team colour. */
+define('POSTCOLORS_MAX_TEAM_ALIASES', 10);
+
+/**
+ * Splits a user-entered list ("a, b; c d") into unique, non-empty entries (order kept).
+ *
+ * @return string[]
+ */
+function postcolors_parse_list(string $input): array
+{
+    $parts = preg_split('/[\s,;]+/u', trim($input), -1, PREG_SPLIT_NO_EMPTY);
+    return array_values(array_unique($parts === false ? [] : $parts));
+}
+
 function postcolors_acp_swatch(string $color): string
 {
     if (!PostcolorsThemeHelper::isValidColor($color)) {
@@ -113,8 +127,8 @@ if (($action === 'add_team' || $action === 'edit_team')) {
 
     $values = [
         'title' => (string)($team['title'] ?? ''),
-        'slug' => (string)($team['slug'] ?? ''),
-        'tag' => (string)($team['tag'] ?? ''),
+        'slug' => implode(', ', (array)($team['slugs'] ?? [])),
+        'tag' => implode(', ', (array)($team['tags'] ?? [])),
         'disporder' => (int)($team['disporder'] ?? 0),
         'active' => (int)($team['active'] ?? 1),
         'colors' => (array)($team['colors'] ?? []),
@@ -123,38 +137,52 @@ if (($action === 'add_team' || $action === 'edit_team')) {
 
     if ($mybb->request_method === 'post') {
         $values['title'] = trim($mybb->get_input('title'));
-        $values['slug'] = strtolower(trim($mybb->get_input('slug')));
-        $values['tag'] = PostcolorsTagRegistry::normalize($mybb->get_input('tag'));
+        // Lists: the first entry is the primary slug / tag, the others are additional ones.
+        $slugList = postcolors_parse_list(strtolower($mybb->get_input('slug')));
+        $tagList = array_values(array_unique(array_map([PostcolorsTagRegistry::class, 'normalize'],
+            postcolors_parse_list($mybb->get_input('tag')))));
+        $values['slug'] = implode(', ', $slugList);
+        $values['tag'] = implode(', ', $tagList);
         $values['disporder'] = $mybb->get_input('disporder', MyBB::INPUT_INT);
         $values['active'] = $mybb->get_input('active', MyBB::INPUT_INT) === 1 ? 1 : 0;
 
         if ($values['title'] === '' || my_strlen($values['title']) > 100) {
             $errors[] = $lang->postcolors_error_title;
         }
-        if (!preg_match('/^[a-z0-9_-]{1,30}$/', $values['slug']) || preg_match('/^p\d+$/', $values['slug'])) {
+        if (empty($slugList)) {
             $errors[] = $lang->postcolors_error_slug;
-        } else {
-            $other = PostcolorsRepository::teamBySlug($values['slug']);
-            if ($other && (int)$other['teamid'] !== $teamid) {
-                $errors[] = $lang->postcolors_error_slug_taken;
+        }
+        if (count($slugList) > POSTCOLORS_MAX_TEAM_ALIASES || count($tagList) > POSTCOLORS_MAX_TEAM_ALIASES) {
+            $errors[] = $lang->sprintf($lang->postcolors_error_too_many, POSTCOLORS_MAX_TEAM_ALIASES);
+        }
+        foreach ($slugList as $slug) {
+            if (!preg_match('/^[a-z0-9_-]{1,30}$/', $slug) || preg_match('/^p\d+$/', $slug)) {
+                $errors[] = $lang->postcolors_error_slug;
+                break;
             }
         }
-        if ($values['tag'] !== '') {
-            if (!PostcolorsTagRegistry::isWellFormed($values['tag'])) {
+        foreach ($slugList as $slug) {
+            $other = PostcolorsRepository::teamBySlug($slug);
+            if ($other && (int)$other['teamid'] !== $teamid) {
+                $errors[] = $lang->sprintf($lang->postcolors_error_slug_taken, htmlspecialchars_uni($slug));
+            }
+        }
+        $data = postcolors_data();
+        foreach ($tagList as $tag) {
+            if (!PostcolorsTagRegistry::isWellFormed($tag)) {
                 $errors[] = $lang->postcolors_error_tag_format;
-            } elseif (PostcolorsTagRegistry::isReserved($values['tag'])) {
+                break;
+            }
+            if (PostcolorsTagRegistry::isReserved($tag)) {
                 $errors[] = $lang->postcolors_error_tag_reserved;
-            } else {
-                $escaped = $db->escape_string($values['tag']);
-                $data = postcolors_data();
-                $owner = $data['tags'][$values['tag']] ?? '';
-                $teamTaken = (int)$db->fetch_field($db->simple_select('postcolors_teams', 'COUNT(*) AS c',
-                    "tag = '{$escaped}' AND teamid != " . $teamid), 'c');
-                $playerTaken = (int)$db->fetch_field($db->simple_select('postcolors_players', 'COUNT(*) AS c',
-                    "custom_tag = '{$escaped}'"), 'c');
-                if ($teamTaken || $playerTaken || ($owner !== '' && $owner !== 't' . $teamid)) {
-                    $errors[] = $lang->postcolors_error_tag_taken;
-                }
+                break;
+            }
+            $owner = $data['tags'][$tag] ?? '';
+            $teamOwner = PostcolorsRepository::teamIdByTag($tag);
+            $playerTaken = (int)$db->fetch_field($db->simple_select('postcolors_players', 'COUNT(*) AS c',
+                "custom_tag = '" . $db->escape_string($tag) . "'"), 'c');
+            if (($teamOwner > 0 && $teamOwner !== $teamid) || $playerTaken || ($owner !== '' && $owner !== 't' . $teamid)) {
+                $errors[] = $lang->sprintf($lang->postcolors_error_tag_taken, htmlspecialchars_uni($tag));
             }
         }
 
@@ -173,7 +201,9 @@ if (($action === 'add_team' || $action === 'edit_team')) {
         }
 
         if (empty($errors)) {
-            $newId = PostcolorsRepository::saveTeam($teamid, $values['title'], $values['slug'], $values['tag'], $values['disporder'], $values['active']);
+            // First entry = primary slug / tag (teams table), the rest = additional ones
+            $newId = PostcolorsRepository::saveTeam($teamid, $values['title'], $slugList[0], $tagList[0] ?? '', $values['disporder'], $values['active']);
+            PostcolorsRepository::writeTeamAliases($newId, array_slice($slugList, 1), array_slice($tagList, 1));
             PostcolorsRepository::writeTeamColors($newId, $colors);
             PostcolorsCacheBuilder::rebuild();
             log_admin_action($newId, $values['title'], $action === 'add_team' ? 'add' : 'edit');
@@ -196,9 +226,9 @@ if (($action === 'add_team' || $action === 'edit_team')) {
     $container->output_row($lang->postcolors_team_title . ' <em>*</em>', $lang->postcolors_team_title_desc,
         $form->generate_text_box('title', $values['title'], ['id' => 'title', 'maxlength' => 100]), 'title');
     $container->output_row($lang->postcolors_team_slug . ' <em>*</em>', $lang->postcolors_team_slug_desc,
-        $form->generate_text_box('slug', $values['slug'], ['id' => 'slug', 'maxlength' => 30]), 'slug');
+        $form->generate_text_box('slug', $values['slug'], ['id' => 'slug', 'maxlength' => 400, 'style' => 'width: 400px']), 'slug');
     $container->output_row($lang->postcolors_team_tag, $lang->postcolors_team_tag_desc,
-        $form->generate_text_box('tag', $values['tag'], ['id' => 'tag', 'maxlength' => 50]), 'tag');
+        $form->generate_text_box('tag', $values['tag'], ['id' => 'tag', 'maxlength' => 600, 'style' => 'width: 400px']), 'tag');
     $container->output_row($lang->postcolors_team_disporder, '',
         $form->generate_numeric_field('disporder', $values['disporder'], ['id' => 'disporder', 'min' => 0]), 'disporder');
     $container->output_row($lang->postcolors_team_active, '',
@@ -596,8 +626,16 @@ $table->construct_header($lang->postcolors_controls, ['class' => 'align_center',
 foreach (PostcolorsRepository::teams() as $teamid => $team) {
     $table->construct_cell('<strong><a href="' . POSTCOLORS_ACP_URL . '&amp;action=edit_team&amp;teamid=' . $teamid . '">'
         . htmlspecialchars_uni((string)$team['title']) . '</a></strong>');
-    $table->construct_cell('<code>[pc=' . htmlspecialchars_uni((string)$team['slug']) . ']</code>');
-    $table->construct_cell($team['tag'] !== '' ? '<code>&lt;' . htmlspecialchars_uni((string)$team['tag']) . '&gt;</code>' : '–');
+    $slugCodes = [];
+    foreach ($team['slugs'] as $slug) {
+        $slugCodes[] = '<code>[pc=' . htmlspecialchars_uni((string)$slug) . ']</code>';
+    }
+    $tagCodes = [];
+    foreach ($team['tags'] as $tag) {
+        $tagCodes[] = '<code>&lt;' . htmlspecialchars_uni((string)$tag) . '&gt;</code>';
+    }
+    $table->construct_cell(implode(' ', $slugCodes));
+    $table->construct_cell(!empty($tagCodes) ? implode(' ', $tagCodes) : '–');
     $table->construct_cell(postcolors_acp_swatch((string)($team['colors'][0] ?? '')));
     $table->construct_cell($team['active'] ? $lang->postcolors_yes : $lang->postcolors_no, ['class' => 'align_center']);
     $table->construct_cell($form->generate_numeric_field('disporder[' . $teamid . ']', $team['disporder'], ['style' => 'width: 50px', 'min' => 0]), ['class' => 'align_center']);

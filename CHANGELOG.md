@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0] – 2026-11-22
+
+### New
+- **Several slugs and name tags per team colour.** In the ACP, enter them comma-separated
+  (e.g. slugs `staff, hogwarts`, tags `leh, hog`); `[pc=staff]`, `[pc=hogwarts]`, `<leh>` and
+  `<hog>` then use the same colour. The first entry is the main one (editor button, overview);
+  all are shown in the team list and the overview, work in the editor and as CSS element selectors.
+- New table `postcolors_teamaliases` for the additional slugs/tags (created on activation –
+  deactivate and activate once after updating).
+
 ## [2.0.0] – 2026-11-12
 
 Complete rewrite. Upgrade path from 1.x: see README → *Upgrade from 1.x*.

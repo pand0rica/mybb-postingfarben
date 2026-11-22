@@ -64,9 +64,9 @@ Everything is saved with one button and applies to all your linked accounts at o
 | Writing | Result |
 |---|---|
 | `<sarah>“Hello”</sarah>` | Sarah's colour – usable by everyone, e.g. for another character's speech |
-| `<gry>…</gry>` | team colour with the name tag *gry* |
+| `<gry>…</gry>` | team colour with the name tag *gry* (a team can have several tags, e.g. `<leh>` and `<hog>`) |
 | `[pc]…[/pc]` | colour of the person who wrote the post |
-| `[pc=gryffindor]…[/pc]` | team colour by slug |
+| `[pc=gryffindor]…[/pc]` | team colour by slug (a team can have several slugs, e.g. `[pc=staff]` and `[pc=hogwarts]`) |
 | `“…”` (with automatic colouring switched on) | your colour, automatically |
 
 Name tags work everywhere posts or private messages are shown – also in forums without HTML,
@@ -93,9 +93,15 @@ the settings; the frame receives `{$listen_content}`, `{$listen_nav}` and `{$hea
 ![Overview](docs/screenshots/overview.png)
 
 ### Team colours (admins)
-ACP → Configuration → **Postcolors** → *Add team colour*: title, slug (for `[pc=slug]`),
-optional name tag, order, active, master colour and optional colour per theme. The list can be
+ACP → Configuration → **Postcolors** → *Add team colour*: title, slugs (for `[pc=slug]`),
+optional name tags, order, active, master colour and optional colour per theme. The list can be
 sorted; teams can be edited or deleted.
+
+**Several slugs and name tags per team:** enter them separated by commas, e.g. slugs
+`staff, hogwarts` and tags `leh, hog`. Then `[pc=staff]`, `[pc=hogwarts]`, `<leh>` and `<hog>`
+all use the same colour. The first entry is the main one (shown first in the overview and used by
+the editor button); every slug and tag must be unique across all teams and players (up to 10 each).
+After updating from 2.0.x, deactivate and activate the plugin once so the new table is created.
 
 ![ACP: team colours](docs/screenshots/acp-teams.png)
 ![ACP: edit team colour](docs/screenshots/acp-team.png)
