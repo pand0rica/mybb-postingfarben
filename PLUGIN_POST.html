@@ -12,7 +12,7 @@ In vielen RPGs hat jede Person, die spielt, eine eigene Schriftfarbe für die w�
 [*] Master-Farbe plus eigene Farbe pro Theme, mit Live-Vorschau auf dem Theme-Hintergrund
 [*] Namens-Tags funktionieren überall – auch in Foren ohne HTML, in PNs, Vorschau, Portal, Archiv
 [*] Wörtliche Rede automatisch färben, ohne Code im Text
-[*] Teamfarben (Häuser, Gruppen) im ACP, Editor-Button und Übersichtsliste
+[*] Teamfarben (Häuser, Gruppen) im ACP, Editor-Button und Übersichtsliste – neu: mehrere Slugs und Namens-Tags pro Team
 [/list]
 
 [size=large][b]Was das Plugin alles kann[/b][/size]
@@ -22,7 +22,7 @@ In vielen RPGs hat jede Person, die spielt, eine eigene Schriftfarbe für die w�
 [*][b]Postingfarben festlegen[/b] – Ein Formular mit einem Speichern-Button: Master-Farbe und für jedes Theme, das du nutzen darfst, optional eine eigene Farbe. Color-Picker und Hex-Feld sind verbunden, die Vorschau zeigt den Beispieltext auf dem echten Theme-Hintergrund, bei schlecht lesbaren Kombinationen erscheint eine Kontrastwarnung. „Master verwenden“ setzt eine Theme-Farbe zurück. [i](UserCP → Postingfarben)[/i]
 [*][b]Eine Farbe für alle Accounts[/b] – Die Farben hängen an deinem Hauptaccount. Du kannst sie aus jedem verknüpften Account ändern, die Änderung gilt sofort überall.
 [*][b]Namens-Tags[/b] – Mit [code]<sarah>…</sarah>[/code] färbt jede*r Text in Sarahs Farbe – praktisch, wenn in deinem Beitrag ein Charakter von jemand anderem spricht. Der Tag ist der Name aus dem Profilfeld (Groß/Klein egal). Passt der Name nicht als Tag (Leerzeichen, Sonderzeichen) oder ist er vergeben, legst du einen eigenen Tag fest. [i](UserCP → Postingfarben)[/i]
-[*][b]MyCode [pc][/b] – [code][pc]…[/pc][/code] färbt in deiner eigenen Farbe, [code][pc=slug]…[/pc][/code] in einer Teamfarbe.
+[*][b]MyCode [pc][/b] – [code][pc]…[/pc][/code] färbt in deiner eigenen Farbe, [code][pc=slug]…[/pc][/code] in einer Teamfarbe. Eine Teamfarbe kann mehrere Slugs haben, z. B. [code][pc=schulpersonal][/code] und [code][pc=hogwarts][/code] – beide färben gleich.
 [*][b]Wörtliche Rede automatisch färben[/b] – Schalter an, ein oder mehrere Anführungszeichen-Paare ankreuzen („…“, »…«, «…», "…", “…”, ‚…‘, '…' und/oder ein eigenes Paar) – fertig. Alles zwischen den Zeichen erscheint in deiner Farbe, in Beiträgen und PNs. Apostrophe wie in „geht's“ werden erkannt, Zitate, Code, Links und bereits gefärbte Stellen bleiben unverändert. Der gespeicherte Text bleibt sauber.
 [*][b]Editor-Button[/b] – Text markieren, Button klicken, „Meine Farbe“ oder eine Teamfarbe wählen. Im WYSIWYG-Editor siehst du die Farben direkt, beim Umschalten in den Quelltext geht nichts verloren.
 [*][b]Vorschau[/b] – Die Vorschau bei neuen Themen, Antworten, Bearbeitungen und PNs zeigt alle Farben schon vor dem Speichern.
@@ -100,6 +100,15 @@ In vielen RPGs hat jede Person, die spielt, eine eigene Schriftfarbe für die w�
 [*] ACP → Konfiguration → Plugins → Postcolors → Installieren & aktivieren
 [*] ACP → Konfiguration → Einstellungen → Postcolors → Profilfeld „Spieler*innen-Name“ eintragen
 [/list]
+
+[size=large][b]Update von 2.0.x auf 2.1.0[/b][/size]
+
+[list=1]
+[*] Neue Dateien hochladen (bestehende überschreiben)
+[*] ACP → Konfiguration → Plugins → Postcolors → einmal [b]deaktivieren und wieder aktivieren[/b] – dabei wird die neue Tabelle für zusätzliche Slugs und Tags angelegt
+[*] Optional: ACP → Konfiguration → Postcolors → Teamfarbe bearbeiten → mehrere Slugs bzw. Namens-Tags mit Komma trennen, z. B. [code]schulpersonal, hogwarts[/code] und [code]leh, hog[/code]
+[/list]
+Der jeweils erste Eintrag ist der Haupt-Slug bzw. Haupt-Tag (Editor-Button, Übersicht). Pro Team sind bis zu 10 Slugs und 10 Tags möglich; jeder muss über alle Teams und Spieler*innen hinweg einmalig sein. Bestehende Beiträge und Farben bleiben unverändert.
 
 [size=large][b]Update von 1.x[/b][/size]
 
