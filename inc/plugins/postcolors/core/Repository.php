@@ -15,6 +15,7 @@ class PostcolorsRepository
     public const T_COLORS = 'postcolors_colors';
     public const T_TEAMS = 'postcolors_teams';
     public const T_TEAMCOLORS = 'postcolors_teamcolors';
+    public const T_TEAMALIASES = 'postcolors_teamaliases';
 
     /* ---------------------------------------------------------------- Themes */
 
@@ -177,7 +178,20 @@ class PostcolorsRepository
             $row['disporder'] = (int)$row['disporder'];
             $row['active'] = (int)$row['active'];
             $row['colors'] = [];
+            // All slugs / tags of the team; the first entry is the primary one (teams table).
+            $row['slugs'] = [(string)$row['slug']];
+            $row['tags'] = ((string)$row['tag'] !== '') ? [(string)$row['tag']] : [];
             $teams[$row['teamid']] = $row;
+        }
+        if (!empty($teams) && self::aliasTableExists()) {
+            $query = $db->simple_select(self::T_TEAMALIASES, 'teamid, kind, value',
+                'teamid IN (' . implode(',', array_keys($teams)) . ')', ['order_by' => 'disporder, value']);
+            while ($row = $db->fetch_array($query)) {
+                $key = $row['kind'] === 'slug' ? 'slugs' : ($row['kind'] === 'tag' ? 'tags' : '');
+                if ($key !== '' && isset($teams[(int)$row['teamid']])) {
+                    $teams[(int)$row['teamid']][$key][] = (string)$row['value'];
+                }
+            }
         }
         if (!empty($teams)) {
             $query = $db->simple_select(self::T_TEAMCOLORS, 'teamid, tid, color',
@@ -197,11 +211,85 @@ class PostcolorsRepository
         return $teams[$teamid] ?? null;
     }
 
+    /** Finds a team by any of its slugs (primary or additional). */
     public static function teamBySlug(string $slug): ?array
     {
         global $db;
-        $row = $db->fetch_array($db->simple_select(self::T_TEAMS, '*', "slug = '" . $db->escape_string($slug) . "'"));
+        $escaped = $db->escape_string($slug);
+        $row = $db->fetch_array($db->simple_select(self::T_TEAMS, '*', "slug = '{$escaped}'"));
+        if (!$row && self::aliasTableExists()) {
+            $alias = $db->fetch_array($db->simple_select(self::T_TEAMALIASES, 'teamid', "kind = 'slug' AND value = '{$escaped}'"));
+            if ($alias) {
+                $row = $db->fetch_array($db->simple_select(self::T_TEAMS, '*', 'teamid = ' . (int)$alias['teamid']));
+            }
+        }
         return $row ?: null;
+    }
+
+    /** Id of the team that uses this tag (primary or additional), 0 if none. */
+    public static function teamIdByTag(string $tag): int
+    {
+        global $db;
+        $escaped = $db->escape_string($tag);
+        $row = $db->fetch_array($db->simple_select(self::T_TEAMS, 'teamid', "tag = '{$escaped}'"));
+        if (!$row && self::aliasTableExists()) {
+            $row = $db->fetch_array($db->simple_select(self::T_TEAMALIASES, 'teamid', "kind = 'tag' AND value = '{$escaped}'"));
+        }
+        return $row ? (int)$row['teamid'] : 0;
+    }
+
+    public static function aliasTableExists(): bool
+    {
+        global $db;
+        static $exists = null;
+        if ($exists === null) {
+            $exists = (bool)$db->table_exists(self::T_TEAMALIASES);
+        }
+        return $exists;
+    }
+
+    /**
+     * Replaces the additional slugs/tags of a team.
+     *
+     * @param string[] $slugs additional slugs (without the primary one)
+     * @param string[] $tags  additional tags (without the primary one)
+     */
+    public static function writeTeamAliases(int $teamid, array $slugs, array $tags): void
+    {
+        global $db;
+        if (!self::aliasTableExists()) {
+            return;
+        }
+        $db->delete_query(self::T_TEAMALIASES, 'teamid = ' . $teamid);
+        foreach (['slug' => $slugs, 'tag' => $tags] as $kind => $values) {
+            $order = 0;
+            foreach (array_values($values) as $value) {
+                $db->insert_query(self::T_TEAMALIASES, [
+                    'teamid' => $teamid,
+                    'kind' => $kind,
+                    'value' => $db->escape_string((string)$value),
+                    'disporder' => $order++,
+                ]);
+            }
+        }
+    }
+
+    /** @return array<string,bool> every team tag (primary and additional, active or not) */
+    public static function allTeamTags(): array
+    {
+        global $db;
+        $tags = [];
+        $query = $db->simple_select(self::T_TEAMS, 'tag', "tag != ''");
+        while ($row = $db->fetch_array($query)) {
+            $tags[(string)$row['tag']] = true;
+        }
+        if (self::aliasTableExists()) {
+            $query = $db->simple_select(self::T_TEAMALIASES, 'value', "kind = 'tag'");
+            while ($row = $db->fetch_array($query)) {
+                $tags[(string)$row['value']] = true;
+            }
+        }
+        return $tags;
     }
 
     /** Legt ein Team an oder aktualisiert es; liefert die teamid. */
@@ -232,6 +320,9 @@ class PostcolorsRepository
     {
         global $db;
         $db->delete_query(self::T_TEAMCOLORS, 'teamid = ' . $teamid);
+        if (self::aliasTableExists()) {
+            $db->delete_query(self::T_TEAMALIASES, 'teamid = ' . $teamid);
+        }
         $db->delete_query(self::T_TEAMS, 'teamid = ' . $teamid);
     }
 

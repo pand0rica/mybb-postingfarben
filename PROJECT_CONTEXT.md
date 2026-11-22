@@ -3,7 +3,7 @@
 ## Identität
 - **Name:** Postcolors
 - **Codename / Dateiname:** `postcolors` (Präfix: `postcolors_`)
-- **Version:** 2.0.0 (kompletter Neubau, ersetzt 1.x)
+- **Version:** 2.1.0 (kompletter Neubau, ersetzt 1.x)
 - **Entwickelt von:** pand0rica
 - **Kurzbeschreibung:** Postingfarben pro Spieler*in und Theme, Teamfarben, Namens-Tags
   (`<sarah>…</sarah>`), MyCode `[pc]`, Editor-Button und automatische Färbung wörtlicher Rede.
@@ -42,7 +42,8 @@ automatisch (wörtliche Rede). Zusätzlich verwaltet das Team globale Teamfarben
 |---|---|---|
 | `postcolors_players` | Einstellungen pro Spieler*in | `pid` PK (= uid des Hauptaccounts), `custom_tag` VARCHAR(50) NULL UNIQUE (utf8mb4_bin, klein gespeichert), `speech_enabled` TINYINT, `quote_presets` VARCHAR(100) (kommagetrennte Voreinstellungen, Mehrfachauswahl), `quote_open`/`quote_close` VARCHAR(3) (eigenes Paar), `updated` INT |
 | `postcolors_colors` | Farben pro Spieler*in | `pid`, `tid` (0 = Master), `color` CHAR(7); PK (`pid`,`tid`) |
-| `postcolors_teams` | Teamfarben | `teamid` PK, `title`, `slug` UNIQUE, `tag` UNIQUE (utf8mb4_bin, klein), `disporder`, `active` |
+| `postcolors_teams` | Teamfarben | `teamid` PK, `title`, `slug` UNIQUE (Haupt-Slug), `tag` UNIQUE (Haupt-Tag, utf8mb4_bin, klein), `disporder`, `active` |
+| `postcolors_teamaliases` | Weitere Slugs/Tags eines Teams | `teamid`, `kind` (`slug`/`tag`), `value` (utf8mb4_bin, klein), `disporder`; PK (`kind`,`value`) |
 | `postcolors_teamcolors` | Farben pro Team | `teamid`, `tid` (0 = Master), `color`; PK (`teamid`,`tid`) |
 
 Farbe immer `#RRGGBB` (Großbuchstaben). Auflösung: Theme-Farbe → Master → keine.
@@ -56,7 +57,7 @@ Für den eingeloggten Account wird `$mybb->user['as_uid']` direkt gelesen.
 
 ## Datacache `postcolors`
 `css[tid]` (fertiger CSS-String, `0` = nur Master-Farben für unbekannte Themes),
-`tags[tag] = 'p12' | 't3'`, `slugs[slug] = teamid`, `teams[]` (für Editor/Liste),
+`tags[tag] = 'p12' | 't3'` (alle Tags inkl. Team-Zusatztags), `slugs[slug] = teamid` (alle Slugs), `teams[]` (für Editor/Liste, je mit `slug`/`tag` = Haupt, `slugs[]`/`tags[]` = alle),
 `players[pid] = [tag, speech_open, speech_close]`, `known[]` (pids mit Farbe),
 `bg[tid]`, `conflicts[]`. Gebaut nur bei Änderungen (UserCP, ACP, Migration,
 Theme-Löschung/-Änderung, Profilfeld-Änderung, Settings-Änderung).

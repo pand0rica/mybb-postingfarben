@@ -30,7 +30,8 @@ jQuery(function ($) {
 
 	function teamBySlug(slug) {
 		for (var i = 0; i < teams.length; i++) {
-			if (teams[i].slug === slug) {
+			var slugs = teams[i].slugs || [teams[i].slug];
+			if (slugs.indexOf(slug) !== -1) {
 				return teams[i];
 			}
 		}

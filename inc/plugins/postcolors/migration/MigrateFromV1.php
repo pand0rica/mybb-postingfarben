@@ -376,9 +376,8 @@ class PostcolorsMigrateFromV1
         foreach ($legacyTeams as $team) {
             $known[PostcolorsTagRegistry::normalize((string)($team[1] ?? ''))] = true;
         }
-        $query = $db->simple_select('postcolors_teams', 'tag');
-        while ($row = $db->fetch_array($query)) {
-            $known[(string)$row['tag']] = true;
+        foreach (PostcolorsRepository::allTeamTags() as $teamTag => $unused) {
+            $known[$teamTag] = true;
         }
 
         $found = [];

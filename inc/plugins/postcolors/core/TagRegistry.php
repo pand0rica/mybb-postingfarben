@@ -66,7 +66,7 @@ class PostcolorsTagRegistry
     /**
      * Löst alle Tags auf.
      *
-     * @param array<int, array{teamid:int, tag:string, active:int}> $teams
+     * @param array<int, array{teamid:int, tag:string, tags?:string[], active:int}> $teams
      * @param array<int, array{pid:int, custom_tag:?string, profile_name:string}> $players
      * @return array{tags: array<string,string>, player_tags: array<int,string>, team_tags: array<int,string>, conflicts: array<int, array>}
      */
@@ -78,16 +78,24 @@ class PostcolorsTagRegistry
         $teamTags = [];
         $conflicts = [];
 
+        $teamAllTags = [];
         foreach ($teams as $team) {
-            $tag = self::normalize((string)$team['tag']);
-            if ($tag === '' || !self::isValid($tag) || isset($owner[$tag])) {
-                continue;
-            }
             $key = 't' . (int)$team['teamid'];
-            $owner[$tag] = $key;
-            $teamTags[(int)$team['teamid']] = $tag;
-            if (!empty($team['active'])) {
-                $tags[$tag] = $key;
+            // A team may own several tags ('tags'); the first accepted one is its primary tag.
+            $candidates = isset($team['tags']) && is_array($team['tags']) ? $team['tags'] : [(string)$team['tag']];
+            foreach ($candidates as $candidate) {
+                $tag = self::normalize((string)$candidate);
+                if ($tag === '' || !self::isValid($tag) || isset($owner[$tag])) {
+                    continue;
+                }
+                $owner[$tag] = $key;
+                if (!isset($teamTags[(int)$team['teamid']])) {
+                    $teamTags[(int)$team['teamid']] = $tag;
+                }
+                $teamAllTags[(int)$team['teamid']][] = $tag;
+                if (!empty($team['active'])) {
+                    $tags[$tag] = $key;
+                }
             }
         }
 
@@ -129,6 +137,7 @@ class PostcolorsTagRegistry
             }
         }
 
-        return ['tags' => $tags, 'player_tags' => $playerTags, 'team_tags' => $teamTags, 'conflicts' => $conflicts];
+        return ['tags' => $tags, 'player_tags' => $playerTags, 'team_tags' => $teamTags,
+            'team_all_tags' => $teamAllTags, 'conflicts' => $conflicts];
     }
 }

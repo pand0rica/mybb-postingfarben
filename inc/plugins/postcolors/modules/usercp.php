@@ -229,7 +229,7 @@ function postcolors_tag_taken(string $tag, string $ownKey, array $data): bool
     }
     // Auch inaktive Teams und eigene Tags anderer Personen ohne Farbe
     $escaped = $db->escape_string($tag);
-    if ($db->fetch_field($db->simple_select('postcolors_teams', 'COUNT(*) AS c', "tag = '{$escaped}'"), 'c')) {
+    if (PostcolorsRepository::teamIdByTag($tag) > 0) {
         return true;
     }
     $pid = (int)substr($ownKey, 1);

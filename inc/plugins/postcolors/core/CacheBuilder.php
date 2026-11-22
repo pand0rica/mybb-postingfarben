@@ -72,7 +72,8 @@ class PostcolorsCacheBuilder
                 continue;
             }
             $known[$pid] = 1;
-            $entries['p' . $pid] = ['colors' => $player['colors'], 'tag' => $resolved['player_tags'][$pid] ?? ''];
+            $ownTag = $resolved['player_tags'][$pid] ?? '';
+            $entries['p' . $pid] = ['colors' => $player['colors'], 'tags' => $ownTag !== '' ? [$ownTag] : []];
             if (!empty($player['speech_enabled'])) {
                 $pairs = PostcolorsQuotes::pairs($player['quote_presets'], $player['quote_open'], $player['quote_close']);
                 if (!empty($pairs)) {
@@ -86,13 +87,27 @@ class PostcolorsCacheBuilder
             if (empty($team['active'])) {
                 continue;
             }
-            $entries['t' . $teamid] = ['colors' => $team['colors'], 'tag' => $resolved['team_tags'][$teamid] ?? ''];
-            $slugs[(string)$team['slug']] = $teamid;
+            $teamTags = $resolved['team_all_tags'][$teamid] ?? [];
+            $entries['t' . $teamid] = ['colors' => $team['colors'], 'tags' => $teamTags];
+            $teamSlugs = [];
+            foreach ((array)($team['slugs'] ?? [$team['slug']]) as $slug) {
+                $slug = (string)$slug;
+                if ($slug === '' || isset($slugs[$slug])) {
+                    continue; // empty or already owned by an earlier team
+                }
+                $slugs[$slug] = $teamid;
+                $teamSlugs[] = $slug;
+            }
+            if (empty($teamSlugs)) {
+                $teamSlugs[] = (string)$team['slug'];
+            }
             $teamList[] = [
                 'id' => $teamid,
-                'slug' => (string)$team['slug'],
+                'slug' => $teamSlugs[0],
+                'slugs' => $teamSlugs,
                 'title' => (string)$team['title'],
                 'tag' => $resolved['team_tags'][$teamid] ?? '',
+                'tags' => $teamTags,
             ];
         }
 
@@ -136,11 +151,13 @@ class PostcolorsCacheBuilder
                 continue;
             }
             $selectors = ['.pc-' . $key];
-            $tag = (string)$entry['tag'];
-            if ($elements && $tag !== '' && PostcolorsTagRegistry::isValid($tag)) {
-                $selectors[] = $tag;
-                if ($bold) {
-                    $boldSelectors[] = $tag;
+            foreach ((array)$entry['tags'] as $tag) {
+                $tag = (string)$tag;
+                if ($elements && $tag !== '' && PostcolorsTagRegistry::isValid($tag)) {
+                    $selectors[] = $tag;
+                    if ($bold) {
+                        $boldSelectors[] = $tag;
+                    }
                 }
             }
             $rules[] = implode(',', $selectors) . '{color:' . strtoupper($color) . '}';
